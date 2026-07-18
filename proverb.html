@@ -1390,5 +1390,52 @@ function showErrorModal() {
       initApp();
     })();
   </script>
+  <!-- ═══ BACK TO HUB — paste this in any game page ═══ -->
+<script>
+  // Reads the player name from the URL when the game loaded
+  // Works whether the name came in as ?name=Amrit or was set locally
+  function getPlayerName(){
+    // First try a local variable called playerName if the game has one
+    if(typeof playerName !== 'undefined' && playerName) return playerName;
+    // Otherwise read from the URL param
+    return decodeURIComponent(new URLSearchParams(window.location.search).get('name') || '');
+  }
+
+  function goToHub(){
+    const name = getPlayerName();
+    window.location.href = 'hub.html' + (name ? '?name=' + encodeURIComponent(name) : '');
+  }
+</script>
+
+<button
+  id="backToHubBtn"
+  onclick="goToHub()"
+  style="
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#1e1e38;
+    border:2px solid #2e2e52;
+    color:#7070a0;
+    border-radius:12px;
+    padding:10px 18px;
+    font-size:0.75rem;
+    font-weight:800;
+    cursor:pointer;
+    font-family:'Segoe UI',system-ui,sans-serif;
+    transition:all .2s;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    letter-spacing:.3px;
+    z-index:9999;
+    box-shadow:0 4px 16px #00000044;
+  "
+  onmouseover="this.style.borderColor='#ff8906';this.style.color='#ff8906';"
+  onmouseout="this.style.borderColor='#2e2e52';this.style.color='#7070a0';"
+>
+  ⬡ Hub
+</button>
+<!-- ═══ END BACK TO HUB ═══ -->
 </body>
 </html>
