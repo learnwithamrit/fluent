@@ -66,6 +66,10 @@
             position: relative; transition: all 0.3s ease;
         }
 
+        .idiom-modal-panel {
+    /* existing styles */
+    transition: border-color 0.3s;
+}
         @media (min-width: 500px) {
             body { padding: 16px; }
             .idiom-app {
@@ -81,6 +85,23 @@
             body { padding: 24px; }
             .idiom-app { max-width: 720px; min-height: 75vh; max-height: 90vh; border-radius: 40px; }
         }
+
+        /* Large desktop – almost full width */
+@media (min-width: 1200px) {
+    .idiom-app {
+        max-width: 1100px; /* comfortable reading width */
+        min-height: 75vh;
+        max-height: 90vh;
+        border-radius: 40px;
+    }
+}
+
+/* Ultrawide / 4K screens – expand further */
+@media (min-width: 1600px) {
+    .idiom-app {
+        max-width: 1400px;
+    }
+}
 
         /* Header */
         .idiom-header {
@@ -142,10 +163,32 @@
 
         /* Learning card */
         .idiom-card-wrapper { overflow: hidden; width: 100%; max-width: 380px; position: relative; }
+        /* Increase card size on larger screens */
+@media (min-width: 768px) {
+    .idiom-card-wrapper { max-width: 540px; }
+    .idiom-card-stage { aspect-ratio: 1.7 / 1; }
+}
+
+@media (min-width: 1200px) {
+    .idiom-card-wrapper { max-width: 650px; }
+    .idiom-card-bengali { font-size: 1.8rem; }
+    .idiom-card-english { font-size: 1.4rem; }
+}
         .idiom-card-stage {
             perspective: 1000px; width: 100%; aspect-ratio: 1.6/1;
             cursor: pointer; position: relative; transition: transform 0.3s ease; will-change: transform;
         }
+        /* Increase card size on larger screens */
+@media (min-width: 768px) {
+    .idiom-card-wrapper { max-width: 540px; }
+    .idiom-card-stage { aspect-ratio: 1.7 / 1; }
+}
+
+@media (min-width: 1200px) {
+    .idiom-card-wrapper { max-width: 650px; }
+    .idiom-card-bengali { font-size: 1.8rem; }
+    .idiom-card-english { font-size: 1.4rem; }
+}
         .idiom-card-inner {
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
             transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); will-change: transform;
@@ -246,6 +289,48 @@
         .text-muted { color: var(--text-secondary); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+/* Full‑app green flash */
+.idiom-app.correct-flash {
+    animation: appFlashGreen 0.6s ease-out;
+}
+.idiom-hint-text {
+    color: var(--error);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+    min-height: 20px;
+    margin-top: 4px;
+}
+        /* Quiz – wider options */
+@media (min-width: 768px) {
+    .idiom-quiz-card { max-width: 600px; }
+    .idiom-options-list { max-width: 600px; }
+    .idiom-option-btn { padding: 16px 20px; font-size: 1rem; }
+}
+
+@media (min-width: 1200px) {
+    .idiom-quiz-card { max-width: 750px; }
+    .idiom-options-list { max-width: 750px; }
+    .idiom-option-btn { padding: 18px 24px; font-size: 1.1rem; }
+}
+
+@media (min-width: 1200px) {
+    .idiom-header-item { font-size: 0.85rem; }
+    .idiom-header-item .value { font-size: 0.9rem; }
+    .idiom-btn { padding: 16px 28px; font-size: 1.05rem; }
+}
+
+@keyframes appFlashGreen {
+    0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.6), inset 0 0 0 0 rgba(16,185,129,0.4); }
+    40%  { box-shadow: 0 0 30px 10px rgba(16,185,129,0.5), inset 0 0 40px 10px rgba(16,185,129,0.25); }
+    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0), inset 0 0 0 0 rgba(16,185,129,0); }
+}
+
+        
+
+        
     </style>
 </head>
 <body>
@@ -330,6 +415,8 @@
         const m = Math.floor(state.timerSeconds/60), s = state.timerSeconds%60;
         headerTimer.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
     }
+    function pauseTimer() { state.isTimerPaused = true; }
+    function resumeTimer() { state.isTimerPaused = false; }
     function formatTime(sec) { const m=Math.floor(sec/60), s=sec%60; return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
 
     function updateHeaderPlayerName() { headerPlayerName.textContent = state.playerName; }
@@ -349,34 +436,35 @@
     }
 
     // ---------- DATA LOADING ----------
-    function parseCSV(txt) {
-        const rows = [];
-        txt.trim().split(/\r?\n/).forEach(line => {
-            if (!line.trim()) return;
-            const cols = [];
-            let cur = '', inQ = false;
-            for (let i = 0; i < line.length; i++) {
-                const ch = line[i];
-                if (ch === '"') {
-                    if (inQ && i+1 < line.length && line[i+1] === '"') { cur += '"'; i++; }
-                    else inQ = !inQ;
-                } else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-                else cur += ch;
-            }
-            cols.push(cur.trim());
-            if (cols.length >= 5) {
-                const bengali = cols[0].split(';').map(s => s.trim()).filter(Boolean);
-                const english = cols[1].split(';').map(s => s.trim()).filter(Boolean);
-                const distractors = [cols[2], cols[3], cols[4]];
-                rows.push({
-                    bengali: bengali.length ? bengali : [cols[0]],
-                    english: english.length ? english : [cols[1]],
-                    distractors: distractors
-                });
-            }
-        });
-        return rows;
-    }
+   function parseCSV(txt) {
+    const rows = [];
+    txt.trim().split(/\r?\n/).forEach(line => {
+        if (!line.trim()) return;
+        const cols = [];
+        let cur = '', inQ = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                if (inQ && i+1 < line.length && line[i+1] === '"') { cur += '"'; i++; }
+                else inQ = !inQ;
+            } else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+            else cur += ch;
+        }
+        cols.push(cur.trim());
+        // Now expect at least 6 columns (A to F)
+        if (cols.length >= 6) {
+            const bengali = cols[0].split(';').map(s => s.trim()).filter(Boolean);
+            const english = cols[1].split(';').map(s => s.trim()).filter(Boolean);
+            const distractors = [cols[2], cols[3], cols[4], cols[5]];
+            rows.push({
+                bengali: bengali.length ? bengali : [cols[0]],
+                english: english.length ? english : [cols[1]],
+                distractors: distractors
+            });
+        }
+    });
+    return rows;
+}
 
     async function loadProverbData() {
         if (CONFIG.googleSheetCSVUrl && CONFIG.googleSheetCSVUrl.trim() !== '') {
@@ -571,109 +659,259 @@
     }
 
     // ---------- MULTI‑SELECT QUIZ ----------
-    function renderQuizQuestion() {
-        if (state.currentQuizIndex >= state.totalInSession) { finishQuiz(); return; }
-        state.phase = 'quiz'; updateHeaderScore(); updateHeaderCardIndex();
-        state.selectedOptions.clear();
+function renderQuizQuestion() {
+    if (state.currentQuizIndex >= state.totalInSession) { finishQuiz(); return; }
+    state.phase = 'quiz'; updateHeaderScore(); updateHeaderCardIndex();
+    state.selectedOptions.clear();
 
-        const sessionIdx = state.quizOrder[state.currentQuizIndex];
-        const proverb = state.sessionProverbs[sessionIdx];
+    const sessionIdx = state.quizOrder[state.currentQuizIndex];
+    const proverb = state.sessionProverbs[sessionIdx];
 
-        // Build options: correct ones (from english) + distractors
-        const corrects = proverb.english;
-        const distractors = [...proverb.distractors];
-        // Shuffle distractors and take enough to fill to 4
-        for (let i=distractors.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [distractors[i], distractors[j]] = [distractors[j], distractors[i]]; }
-        const needed = 4 - corrects.length;
-        const selectedDistractors = distractors.slice(0, needed);
+    const corrects = proverb.english.slice(0, 5);   // max 5 corrects
+    const allDistractors = [...proverb.distractors]; // 4 distractors
+    for (let i = allDistractors.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allDistractors[i], allDistractors[j]] = [allDistractors[j], allDistractors[i]];
+    }
+    const needed = 5 - corrects.length;
+    const chosenDistractors = allDistractors.slice(0, needed);
 
-        // Combine and shuffle
-        const options = [
-            ...corrects.map(text => ({ text, isCorrect: true })),
-            ...selectedDistractors.map(text => ({ text, isCorrect: false }))
-        ];
-        for (let i=options.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [options[i], options[j]] = [options[j], options[i]]; }
+    const options = [
+        ...corrects.map(text => ({ text, isCorrect: true })),
+        ...chosenDistractors.map(text => ({ text, isCorrect: false }))
+    ];
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+    }
 
-        // Store option data for later checking
-        state.currentOptions = options;
-        state.correctIndices = new Set(options.reduce((acc, opt, idx) => { if(opt.isCorrect) acc.push(idx); return acc; }, []));
+    state.currentOptions = options;
+    state.correctIndices = new Set(options.reduce((acc, opt, idx) => {
+        if (opt.isCorrect) acc.push(idx);
+        return acc;
+    }, []));
 
-        mainContent.innerHTML = `
-            <div class="idiom-quiz-card">
-                <div class="idiom-quiz-bengali">${escapeHTML(proverb.bengali.join(' • '))}</div>
-            </div>
-            <div class="idiom-options-list" id="idiomOptionsList">
-                ${options.map((opt, idx) => `
-                    <button class="idiom-option-btn" data-index="${idx}">
-                        <span class="check-circle"></span>
-                        <span>${escapeHTML(opt.text)}</span>
-                    </button>
-                `).join('')}
-            </div>
-            <div class="idiom-hint-text" id="idiomHintText"></div>
-            <button class="idiom-btn idiom-btn-primary idiom-btn-full" id="btnSubmitAnswer">Submit</button>
-        `;
+    mainContent.innerHTML = `
+        <div class="idiom-quiz-card">
+            <div class="idiom-quiz-bengali">${escapeHTML(proverb.bengali.join(' • '))}</div>
+        </div>
+        <div class="idiom-options-list" id="idiomOptionsList">
+            ${options.map((opt, idx) => `
+                <button class="idiom-option-btn" data-index="${idx}">
+                    <span class="check-circle"></span>
+                    <span>${escapeHTML(opt.text)}</span>
+                </button>
+            `).join('')}
+        </div>
+        <div class="idiom-hint-text" id="idiomHintText"></div>
+        <button class="idiom-btn idiom-btn-primary idiom-btn-full" id="btnSubmitAnswer">Submit</button>
+    `;
 
-        bottomNav.innerHTML = `
-            <button class="idiom-btn idiom-btn-ghost idiom-btn-full" id="btnBackToHubQuiz">← Back to Hub</button>
-        `;
+    bottomNav.innerHTML = `
+        <button class="idiom-btn idiom-btn-ghost idiom-btn-full" id="btnBackToHubQuiz">← Back to Hub</button>
+    `;
 
-        // Attach option toggle
-        document.querySelectorAll('.idiom-option-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.dataset.index);
-                if (state.selectedOptions.has(idx)) {
-                    state.selectedOptions.delete(idx);
-                    this.classList.remove('selected');
-                } else {
-                    state.selectedOptions.add(idx);
-                    this.classList.add('selected');
-                }
-                document.getElementById('idiomHintText').textContent = ''; // clear hint on change
-            });
+    document.querySelectorAll('.idiom-option-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.index);
+            if (state.selectedOptions.has(idx)) {
+                state.selectedOptions.delete(idx);
+                this.classList.remove('selected');
+            } else {
+                state.selectedOptions.add(idx);
+                this.classList.add('selected');
+            }
+            document.getElementById('idiomHintText').textContent = '';   // ← clear hint
         });
+    });
 
-        document.getElementById('btnSubmitAnswer').addEventListener('click', checkQuizAnswer);
-        document.getElementById('btnBackToHubQuiz').addEventListener('click', () => { if (confirm('Leave quiz?')) { stopTimer(); renderHub(); } });
+    document.getElementById('btnSubmitAnswer').addEventListener('click', checkQuizAnswer);
+    document.getElementById('btnBackToHubQuiz').addEventListener('click', () => {
+        if (confirm('Leave quiz?')) { stopTimer(); renderHub(); }
+    });
+}
+
+function checkQuizAnswer() {
+    const selected = state.selectedOptions;
+    const correct = state.correctIndices;
+    const allBtns = document.querySelectorAll('.idiom-option-btn');
+    const submitBtn = document.getElementById('btnSubmitAnswer');
+    const hintEl = document.getElementById('idiomHintText');
+    if (!submitBtn) return;
+
+    // ---------- Nothing selected ----------
+    if (selected.size === 0) {
+        hintEl.textContent = 'Please select an option.';
+        return;
     }
 
-    function checkQuizAnswer() {
-        const selected = state.selectedOptions;
-        const correct = state.correctIndices;
-        const hintEl = document.getElementById('idiomHintText');
+    // Clear hint on valid submission
+    hintEl.textContent = '';
 
-        // Check if any wrong option selected
-        let anyWrong = false;
-        for (const idx of selected) {
-            if (!correct.has(idx)) { anyWrong = true; break; }
+    // Disable further interaction
+    submitBtn.disabled = true;
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+    // Determine if any wrong option was chosen
+    let anyWrong = false;
+    for (const idx of selected) {
+        if (!correct.has(idx)) {
+            anyWrong = true;
+            break;
         }
+    }
 
+    const isComplete = selected.size === correct.size && !anyWrong;
+
+    if (isComplete) {
+        // Perfect!
+        state.score++;
+        updateHeaderScore();
+        document.getElementById('idiomApp').classList.add('correct-flash');
+        allBtns.forEach(btn => {
+            const idx = parseInt(btn.dataset.index);
+            if (correct.has(idx)) btn.classList.add('correct-flash');
+        });
+        setTimeout(() => {
+            document.getElementById('idiomApp').classList.remove('correct-flash');
+            state.currentQuizIndex++;
+            if (state.currentQuizIndex >= state.totalInSession) finishQuiz();
+            else renderQuizQuestion();
+        }, 700);
+    } else {
+        // Failure – pause timer and show appropriate modal
+        pauseTimer();
         if (anyWrong) {
-            hintEl.textContent = 'Some selected options are incorrect. Try again.';
-            return;
-        }
-
-        // All selected are correct. Check if all correct are selected.
-        if (selected.size === correct.size) {
-            // Correct!
-            state.score++;
-            updateHeaderScore();
-            // Flash correct options
-            document.querySelectorAll('.idiom-option-btn').forEach(btn => {
-                const idx = parseInt(btn.dataset.index);
-                if (correct.has(idx)) btn.classList.add('correct-flash');
-            });
-            document.getElementById('btnSubmitAnswer').disabled = true;
-            setTimeout(() => {
-                state.currentQuizIndex++;
-                if (state.currentQuizIndex >= state.totalInSession) finishQuiz();
-                else renderQuizQuestion();
-            }, 800);
+            showErrorModal('wrong');
         } else {
-            const missing = correct.size - selected.size;
-            hintEl.textContent = `You need ${missing} more correct answer${missing>1?'s':''}.`;
+            const missingCount = correct.size - selected.size;
+            showErrorModal('incomplete', missingCount);
         }
     }
+}
+
+//.................... Show Error Modal Pop-UP-----------------------//
+
+function showErrorModal(type, missingCount = 0) {
+    const proverb = state.sessionProverbs[state.quizOrder[state.currentQuizIndex]];
+    
+    // Choose icon and message based on type
+    let iconHtml = '';
+    let message = '';
+    let borderColor = '';
+
+    if (type === 'incomplete') {
+        // The SVG you shared – scaled down
+        iconHtml = `
+            <div style="width: 90px; height: 90px; margin: 0 auto 10px;">
+                <svg xmlns="http://w3.org" viewBox="0 0 500 560" width="100%" height="100%">
+                    <defs>
+                        <radialGradient id="bodyGrad" cx="45%" cy="35%" r="60%">
+                            <stop offset="0%" stop-color="#ff9d3b"/>
+                            <stop offset="70%" stop-color="#ff6a00"/>
+                            <stop offset="100%" stop-color="#cc4400"/>
+                        </radialGradient>
+                        <radialGradient id="cheekGradL" cx="30%" cy="30%" r="50%">
+                            <stop offset="0%" stop-color="#ff8522" stop-opacity="0.6"/>
+                            <stop offset="100%" stop-color="#ff6a00" stop-opacity="0"/>
+                        </radialGradient>
+                        <radialGradient id="cheekGradR" cx="70%" cy="30%" r="50%">
+                            <stop offset="0%" stop-color="#ff8522" stop-opacity="0.6"/>
+                            <stop offset="100%" stop-color="#ff6a00" stop-opacity="0"/>
+                        </radialGradient>
+                        <radialGradient id="eyeGrad" cx="40%" cy="40%" r="65%">
+                            <stop offset="0%" stop-color="#ffffff"/>
+                            <stop offset="85%" stop-color="#f0f0f0"/>
+                            <stop offset="100%" stop-color="#d9d9d9"/>
+                        </radialGradient>
+                        <radialGradient id="pupilGrad" cx="35%" cy="35%" r="60%">
+                            <stop offset="0%" stop-color="#0b5ba1"/>
+                            <stop offset="50%" stop-color="#033266"/>
+                            <stop offset="100%" stop-color="#001126"/>
+                        </radialGradient>
+                        <linearGradient id="handGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffaa4d"/>
+                            <stop offset="100%" stop-color="#e65c00"/>
+                        </linearGradient>
+                        <linearGradient id="toothGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffa347"/>
+                            <stop offset="100%" stop-color="#d65100"/>
+                        </linearGradient>
+                        <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4d1400" flood-opacity="0.3"/>
+                        </filter>
+                    </defs>
+                    <path d="M150,45 C175,25 210,30 225,48 C210,38 175,35 155,52 Z" fill="#7a2200"/>
+                    <path d="M350,45 C325,25 290,30 275,48 C290,38 325,35 345,52 Z" fill="#7a2200"/>
+                    <circle cx="250" cy="240" r="215" fill="url(#bodyGrad)" stroke="#993300" stroke-width="3"/>
+                    <circle cx="140" cy="210" r="60" fill="url(#cheekGradL)"/>
+                    <circle cx="360" cy="210" r="60" fill="url(#cheekGradR)"/>
+                    <path d="M120,120 C175,110 225,150 225,210 C225,260 175,290 120,275 C75,260 70,180 120,120 Z" fill="url(#eyeGrad)" stroke="#993300" stroke-width="2" filter="url(#shadow)"/>
+                    <path d="M380,120 C325,110 275,150 275,210 C275,260 325,290 380,275 C425,260 430,180 380,120 Z" fill="url(#eyeGrad)" stroke="#993300" stroke-width="2" filter="url(#shadow)"/>
+                    <g transform="translate(170, 200)">
+                        <circle cx="0" cy="0" r="28" fill="url(#pupilGrad)" stroke="#001126" stroke-width="1"/>
+                        <circle cx="0" cy="0" r="14" fill="#000814"/>
+                        <circle cx="-8" cy="-8" r="7" fill="#ffffff"/>
+                        <circle cx="6" cy="6" r="3" fill="#ffffff"/>
+                    </g>
+                    <g transform="translate(300, 200)">
+                        <circle cx="0" cy="0" r="28" fill="url(#pupilGrad)" stroke="#001126" stroke-width="1"/>
+                        <circle cx="0" cy="0" r="14" fill="#000814"/>
+                        <circle cx="-8" cy="-8" r="7" fill="#ffffff"/>
+                        <circle cx="6" cy="6" r="3" fill="#ffffff"/>
+                    </g>
+                    <path d="M75,215 C110,180 170,195 210,235 C160,230 110,240 75,215 Z" fill="#ff801a" opacity="0.4"/>
+                    <path d="M425,215 C390,180 330,195 290,235 C340,230 390,240 425,215 Z" fill="#ff801a" opacity="0.4"/>
+                    <path d="M120,290 C120,240 380,240 380,290 C380,390 120,390 120,290 Z" fill="#661a00" stroke="#4d1400" stroke-width="3"/>
+                    <g filter="url(#shadow)">
+                        <path d="M132,285 C170,270 210,265 250,265 C290,265 330,270 368,285 C360,315 330,325 250,325 C170,325 140,315 132,285 Z" fill="url(#toothGrad)" stroke="#993300" stroke-width="2"/>
+                        <path d="M142,345 C170,360 210,365 250,365 C290,365 330,360 358,345 C350,320 320,315 250,315 C180,315 150,320 142,345 Z" fill="url(#toothGrad)" stroke="#993300" stroke-width="2"/>
+                        <path d="M165,280 L170,323 M205,272 L208,325 M250,265 L250,325 M295,272 L292,325 M335,280 L330,323" stroke="#802000" stroke-width="1.5" opacity="0.7"/>
+                        <path d="M175,348 L180,320 M210,356 L212,320 M250,365 L250,315 M290,356 L288,320 M325,348 L320,320" stroke="#802000" stroke-width="1.5" opacity="0.7"/>
+                    </g>
+                    <g filter="url(#shadow)">
+                        <path d="M170,500 C150,430 220,390 245,460 C255,490 230,550 180,550 C150,550 175,510 170,500 Z" fill="url(#handGrad)" stroke="#993300" stroke-width="2"/>
+                        <path d="M190,425 C195,410 215,415 220,440" fill="none" stroke="#802000" stroke-width="2"/>
+                        <path d="M172,445 C180,430 198,435 202,465" fill="none" stroke="#802000" stroke-width="2"/>
+                        <path d="M162,475 C170,460 185,465 188,495" fill="none" stroke="#802000" stroke-width="2"/>
+                        <path d="M330,500 C350,430 280,390 255,460 C245,490 270,550 320,550 C350,550 325,510 330,500 Z" fill="url(#handGrad)" stroke="#993300" stroke-width="2"/>
+                        <path d="M310,425 C305,410 285,415 280,440" fill="none" stroke="#802000" stroke-width="2"/>
+                        <path d="M328,445 C320,430 302,435 298,465" fill="none" stroke="#802000" stroke-width="2"/>
+                        <path d="M338,475 C330,460 315,465 312,495" fill="none" stroke="#802000" stroke-width="2"/>
+                    </g>
+                </svg>
+            </div>`;
+        message = `Good start! You still need to select all the correct answers. You missed ${missingCount}.`;
+        borderColor = 'rgba(251,191,36,0.4)';   // gold/orange border
+    } else {
+        // Wrong answer
+        iconHtml = '<div style="font-size:2.5rem; margin-bottom:10px;">❌</div>';
+        message = 'That’s incorrect.';
+        borderColor = 'rgba(239,68,68,0.4)';    // red border
+    }
+
+    modalOverlay.innerHTML = `
+        <div class="idiom-modal-panel" style="border-color: ${borderColor};">
+            ${iconHtml}
+            <div class="idiom-modal-label">${message}</div>
+            <div class="idiom-modal-bengali">${escapeHTML(proverb.bengali.join(' • '))}</div>
+            <div class="idiom-modal-correct">→ ${formatVariantList(proverb.english)}</div>
+            <button class="idiom-btn idiom-btn-primary idiom-btn-full" id="btnGotIt">👍 Got It</button>
+        </div>`;
+    modalOverlay.classList.remove('hidden');
+
+    document.getElementById('btnGotIt').addEventListener('click', () => {
+        modalOverlay.classList.add('hidden');
+        modalOverlay.innerHTML = '';
+        resumeTimer();
+        state.currentQuizIndex++;
+        if (state.currentQuizIndex >= state.totalInSession) finishQuiz();
+        else renderQuizQuestion();
+    });
+}
+
+
+    
 
     function finishQuiz() {
         state.phase = 'results'; stopTimer(); updateHeaderScore(); updateHeaderCardIndex();
