@@ -236,30 +236,13 @@ body{
 
 
     <!-- Feed My Brain — top button -->
-<div style="width:100%;max-width:480px;margin-bottom:8px;">
-  <div onclick="goTo('feedmybrain.html')"
-    style="
-      background:linear-gradient(135deg,#1e1e38 0%,#161628 100%);
-      border:2px solid #f9c74f55;
-      border-radius:16px;
-      padding:14px 18px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:14px;
-      transition:all .22s;
-      box-shadow:0 4px 16px #00000033;
-    "
-    onmouseover="this.style.borderColor='#f9c74f';this.style.transform='translateY(-2px)';"
-    onmouseout="this.style.borderColor='#f9c74f55';this.style.transform='';"
-  >
-    <span style="font-size:1.6rem;">🧠</span>
-    <div>
-      <div style="font-size:0.95rem;font-weight:900;color:#f9c74f;margin-bottom:2px;">Feed My Brain</div>
-      <div style="font-size:0.68rem;color:#7070a0;line-height:1.4;">Daily reading · Vocabulary · Knowledge</div>
-    </div>
-    <div style="margin-left:auto;color:#f9c74f;font-size:1.1rem;transition:transform .22s;">›</div>
+<div class="hub-card" onclick="goTo('feedmybrain.html')" style="border-color:#f9c74f55;">
+  <span style="font-size:2rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">🧠</span>
+  <div class="hub-card-info">
+    <div class="hub-card-label" style="color:#f9c74f;">Feed My Brain</div>
+    <div class="hub-card-desc">Daily reading · Vocabulary · Knowledge</div>
   </div>
+  <div class="hub-card-arrow">›</div>
 </div>
     <!-- Word Puzzle -->
     <div class="hub-card puzzle" onclick="goTo('puzzle.html')">
@@ -370,30 +353,13 @@ body{
   </div>
 
   <!-- Restruct — bottom button -->
-<div style="width:100%;max-width:480px;margin-top:8px;">
-  <div onclick="goTo('restruct.html')"
-    style="
-      background:linear-gradient(135deg,#1e1e38 0%,#161628 100%);
-      border:2px solid #06d6a055;
-      border-radius:16px;
-      padding:14px 18px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:14px;
-      transition:all .22s;
-      box-shadow:0 4px 16px #00000033;
-    "
-    onmouseover="this.style.borderColor='#06d6a0';this.style.transform='translateY(-2px)';"
-    onmouseout="this.style.borderColor='#06d6a055';this.style.transform='';"
-  >
-    <span style="font-size:1.6rem;">🔧</span>
-    <div>
-      <div style="font-size:0.95rem;font-weight:900;color:#06d6a0;margin-bottom:2px;">Restruct</div>
-      <div style="font-size:0.68rem;color:#7070a0;line-height:1.4;">Sentence restructuring · Grammar practice</div>
-    </div>
-    <div style="margin-left:auto;color:#06d6a0;font-size:1.1rem;transition:transform .22s;">›</div>
+<div class="hub-card" onclick="goTo('restruct.html')" style="border-color:#06d6a055;">
+  <span style="font-size:2rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">🔧</span>
+  <div class="hub-card-info">
+    <div class="hub-card-label" style="color:#06d6a0;">Restruct</div>
+    <div class="hub-card-desc">Sentence restructuring · Grammar practice</div>
   </div>
+  <div class="hub-card-arrow">›</div>
 </div>
 
   </div>
