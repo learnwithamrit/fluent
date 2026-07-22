@@ -423,11 +423,11 @@ function showHub(){
 //  NAVIGATE TO GAME
 // ═══════════════════════════════════════════
 function goTo(page){
-  // Proverb game not built yet
-// if(page === 'proverb.html' || page === 'idiomize.html'){
-//  alert('This game is coming soon! Stay tuned. 🌟');
-//  return;
-//}
+  // game not built yet
+ if(page === 'feedmybrain.html' || page === 'restruct.html'){
+  alert('This game is coming soon! Stay tuned. 🌟');
+  return;
+  }
   window.location.href = page + '?name=' + encodeURIComponent(playerName);
 }
 
