@@ -1325,7 +1325,16 @@ function renderQuizQuestion() {
   });
 }
 
-
+/*----------------------------------Celebration-------------------------*/
+function showCorrect() {
+  const overlay = document.getElementById('correct-overlay');
+  if (!overlay) return;
+  overlay.classList.add('active');
+  setTimeout(() => {
+    overlay.classList.remove('active');
+  }, 900);
+}
+/*----------------------------------Celebration-End------------------------*/  
       
 function handleQuizAnswer(btn) {
   const allBtns = document.querySelectorAll('.option-btn');
@@ -1359,16 +1368,7 @@ function handleQuizAnswer(btn) {
     showErrorModal();
   }
 }
-/*----------------------------------Celebration-------------------------*/
-function showCorrect() {
-  const overlay = document.getElementById('correct-overlay');
-  if (!overlay) return;
-  overlay.classList.add('active');
-  setTimeout(() => {
-    overlay.classList.remove('active');
-  }, 900);
-}
-/*----------------------------------Celebration-End------------------------*/      
+    
 
 function showErrorModal() {
   const proverb = state.sessionProverbs[state.quizOrder[state.currentQuizIndex]];
