@@ -766,7 +766,29 @@
     .hidden { display: none !important; }
     .text-muted { color: var(--text-secondary); }
     .text-center { text-align: center; }
-  </style>
+
+  /* … your existing game CSS … */
+
+  /* ── CORRECT OVERLAY CSS ── */
+  #correct-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  #correct-overlay.active {
+    opacity: 1;
+    pointer-events: none;
+  }
+
+    
+</style>
 </head>
 <body>
   <div class="app-container" id="appContainer">
@@ -1322,6 +1344,7 @@ function handleQuizAnswer(btn) {
     btn.classList.add('correct-flash');
     state.score++;
     updateHeaderScore();
+    showCorrect(); 
     setTimeout(() => {
       state.currentQuizIndex++;
       if (state.currentQuizIndex >= state.totalInSession) {
@@ -1336,9 +1359,16 @@ function handleQuizAnswer(btn) {
     showErrorModal();
   }
 }
-
-
-      
+/*----------------------------------Celebration-------------------------*/
+function showCorrect() {
+  const overlay = document.getElementById('correct-overlay');
+  if (!overlay) return;
+  overlay.classList.add('active');
+  setTimeout(() => {
+    overlay.classList.remove('active');
+  }, 900);
+}
+/*----------------------------------Celebration-End------------------------*/      
 
 function showErrorModal() {
   const proverb = state.sessionProverbs[state.quizOrder[state.currentQuizIndex]];
@@ -1407,6 +1437,18 @@ function showErrorModal() {
   }
 </script>
 
+<!-- ... your app container (probably <div class="app-container" id="appContainer"> ...) -->
+
+<!-- ═══════════════════════════════════════
+     CORRECT ANSWER CELEBRATION
+════════════════════════════════════════ -->
+<div id="correct-overlay" aria-live="assertive" aria-label="Correct!">
+  <div id="correct-card">
+    <div id="correct-icon">✓</div>
+    <div id="correct-word">CORRECT</div>
+  </div>
+</div>
+  
 <button
   id="backToHubBtn"
   onclick="goToHub()"
