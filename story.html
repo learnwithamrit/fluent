@@ -700,6 +700,12 @@ let activeAudio = null;          // { source, context, buffer, startTime, offset
 let audioCtx = null;
 const allPlayers = [];   // every active player instance will be stored here
 
+
+// Read the player name from the URL (e.g., story.html?name=AM)
+const urlParams = new URLSearchParams(window.location.search);
+const playerName = urlParams.get('name') || sessionStorage.getItem('playerName') || 'Player';
+sessionStorage.setItem('playerName', playerName);
+
 // UI elements
 const levelScreen = document.getElementById('levelScreen');
 const listScreen = document.getElementById('listScreen');
@@ -1387,7 +1393,7 @@ document.getElementById('allDoneModal').addEventListener('click', (e) => {
 
 // Floating buttons
 floatingHubBtn.addEventListener('click', () => {
-    window.location.href = '/fluent/hub.html';
+    window.location.href = '/fluent/hub.html?name=' + encodeURIComponent(playerName);
 });
 document.getElementById('floatingBackBtn').addEventListener('click', () => {
     showScreen(levelScreen);
