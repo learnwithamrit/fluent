@@ -38,7 +38,7 @@
             --gap-sm: 12px;
             --gap-md: 24px;
             --gap-lg: 48px;
-            --max-w: 680px;
+            --max-w: clamp(680px, 80vw, 960px);
         }
 
         *,
@@ -155,15 +155,46 @@
     flex-direction: column;
     gap: 1px;
     margin-bottom: 30px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
     cursor: pointer;
     transition: transform 0.2s;
 }
 .story-wrapper:active { transform: scale(0.98); }
 
+@media (min-width: 600px) {
+    .story-wrapper {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+@media (min-width: 900px) {
+    .story-wrapper {
+        max-width: 85%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+@media (min-width: 1200px) {
+    .story-wrapper {
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+@media (min-width: 1400px) {
+    .story-wrapper {
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 /* Top info card */
 .story-info-card {
     border-radius: 32px;
-    padding: 28px 24px;
+    padding: 28px 24px 40px 24px;
     color: #000;
     background: linear-gradient(115deg, #60be3e 0%, #89d35a 40%, #ffffff 90%);
     /* gradient will be overridden inline by JS */
@@ -446,6 +477,27 @@
         .cta-btn:hover { background: #ffaa30; }
 
 
+/* Part selector styling (matches Fluent theme) */
+.part-select {
+  background: var(--sur2);
+  color: var(--txt);
+  border: 1.5px solid var(--brd);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9em;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.part-select:hover { border-color: var(--acc); }
+.part-select option {
+  background: var(--sur);
+  color: var(--txt);
+}
+
+        
 
 .playhead {
     position: absolute;
@@ -494,6 +546,66 @@
     color: var(--acc);
 }
 
+
+
+/* Accordion Container */
+/* Accordion container */
+.accordion {
+    margin: 15px 0;
+}
+
+/* Chapter header */
+.chapter-header {
+    background: var(--sur);
+    border: 1px solid var(--brd);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--txt);
+    transition: background 0.2s;
+    user-select: none;
+}
+.chapter-header:hover { background: var(--sur2); }
+.chapter-header .arrow {
+    font-size: 0.8em;
+    transition: transform 0.2s;
+}
+.chapter-header.open .arrow {
+    transform: rotate(90deg);
+}
+
+/* Parts list (hidden by default) */
+.parts-list {
+    display: none;
+    margin-left: 16px;
+    margin-bottom: 10px;
+}
+.parts-list.open {
+    display: block;
+}
+
+/* Individual part row */
+.part-row {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    color: var(--mut);
+    transition: background 0.2s;
+}
+.part-row:hover { background: var(--sur2); }
+.part-row.active {
+    background: var(--acc);
+    color: #0d0d1a;
+    font-weight: 700;
+}
+/* Accordion End */
+
         
         #page-footer {
             width: 100%;
@@ -505,6 +617,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            margin-top: auto;
         }
         #footer-brand-name {
             font-size: var(--fs-lg);
@@ -589,7 +702,7 @@
 <body>
     <!-- Floating Back to Level button (above Hub) -->
 <button id="floatingBackBtn" style="display:none;">← Levels</button>
-
+<button id="floatingHubBtn">🏠 Hub</button>
     <!-- Floating Hub Button -->
     <button id="floatingHubBtn">🏠 Hub</button>
 
@@ -599,8 +712,8 @@
         <button class="level-btn" data-level="Beginner">Beginner 🐣</button>
         <button class="level-btn" data-level="Intermediate">Intermediate 🐥</button>
         <button class="level-btn" data-level="Advanced">Advanced 🦉</button>
-        <button class="level-btn mega-btn" id="megaStoriesBtn">🚀 The Mega Stories</button>
-    </div>
+        <button class="level-btn mega-btn" id="megaStoriesBtn" data-level="Mega" >🚀 The Mega Stories</button>
+    </div> 
 
     <!-- Screen: Story List -->
     <div id="listScreen" class="screen">
@@ -620,24 +733,39 @@
             <h1 class="hero-title" id="heroTitle"></h1>
             <p class="hero-description" id="heroDescription"></p>
         </header>
+
+        <!-- Mega story part selector & info (hidden by default) -->
+<div id="megaStoryControls" style="display:none;">
+    <div class="accordion" id="accordionTop"></div>
+    <p id="currentPartTitle" style="color:var(--acc); font-weight:700; text-align:center; margin-bottom:10px;"></p>
+  <!-- Top part selector -->
+  <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin:20px 0;">
+   
+  </div>
+  <!-- Current part title (shown above the story text) -->
+  <p id="currentPartTitle" style="color:var(--acc); font-weight:700; text-align:center; margin-bottom:10px;"></p>
+</div>
         <div class="audio-capsule" id="heroAudioCapsule">
             <div class="play-btn" id="heroPlayBtn"></div>
             <div class="wave-container" id="heroWaveContainer">
                 <canvas id="heroWaveCanvas"></canvas>
             </div>
         </div>
-        <main id="content-body"></main>
-        <div class="story-buttons">
-            <button class="cta-btn secondary" id="finishStory">📖 Finish Reading</button>
-            <button class="cta-btn" id="nextStory">➡ Next Story</button>
+            <main id="content-body"></main>
+                    <!-- Bottom part selector (inside story-buttons area for convenience) -->
+            <div id="megaStoryControlsBottom" style="display:none; width:100%; text-align:center; margin-bottom:15px;">
+                <div class="accordion" id="accordionBottom"></div>
+             
+             
+            </div>
+            <div class="story-buttons">
+              <button class="cta-btn secondary" id="prevPart" style="display:none;">← Previous Part</button>
+              <button class="cta-btn secondary" id="finishStory">📖 Finish Reading</button>
+              <button class="cta-btn" id="nextStory">➡ Next Story</button>
+            </div>
+            
         </div>
-        <footer id="page-footer">
-            <div id="footer-brand-name">Fluent</div>
-            <div id="footer-brand-by">by Amrit</div>
-            <p id="footer-tagline">Interactive English learning games for students of all levels.</p>
-            <a id="footer-mail" href="mailto:ilearnwithamrit@gmail.com">✉ ilearnwithamrit@gmail.com</a>
-            <p id="footer-copy">© 2026 Fluent by Amrit</p>
-        </footer>
+        
     </div>
 
     <!-- Screen: Summary -->
@@ -657,6 +785,14 @@
         <button class="cta-btn secondary" id="megaBackToLevels" style="margin-top:30px;">⬅ Back to Levels</button>
     </div>
 
+        <footer id="page-footer">
+            <div id="footer-brand-name">Fluent</div>
+            <div id="footer-brand-by">by Amrit</div>
+            <p id="footer-tagline">Interactive English learning games for students of all levels.</p>
+            <a id="footer-mail" href="mailto:ilearnwithamrit@gmail.com">✉ ilearnwithamrit@gmail.com</a>
+            <p id="footer-copy">© 2026 Fluent by Amrit</p>
+        </footer>
+    
     <!-- Modal: Word Definition -->
     <div class="modal" id="wordModal">
         <div class="modal-content">
@@ -685,6 +821,7 @@
 // ═══════════════════════════════════════
 const STORIES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ47-snxzaPFRnl4_nzuPgOXiw9leZApJ5zQ7OFaER6tNPy7LKa1qJxJGECvEKyo-MKp8Xb47EsNWLd/pub?gid=0&single=true&output=tsv';
 const VOCAB_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ47-snxzaPFRnl4_nzuPgOXiw9leZApJ5zQ7OFaER6tNPy7LKa1qJxJGECvEKyo-MKp8Xb47EsNWLd/pub?gid=1607542814&single=true&output=tsv';
+const SPREADSHEET_ID = '2PACX-1vQ47-snxzaPFRnl4_nzuPgOXiw9leZApJ5zQ7OFaER6tNPy7LKa1qJxJGECvEKyo-MKp8Xb47EsNWLd';
 
 // ═══════════════════════════════════════
 //  GLOBAL STATE
@@ -698,13 +835,12 @@ let learnedWords = {};
 let learntCount = 0;
 let activeAudio = null;          // { source, context, buffer, startTime, offset }
 let audioCtx = null;
+// Mega story state
+let isMegaStory = false;           // true if current story is a mega story
+let megaParts = [];                // array of parts { part, title, storyText, audioURL }
+let currentPartIndex = 0;          // index within megaParts
+let megaStoryGID = null;           // the GID of the mega story sheet
 const allPlayers = [];   // every active player instance will be stored here
-
-
-// Read the player name from the URL (e.g., story.html?name=AM)
-const urlParams = new URLSearchParams(window.location.search);
-const playerName = urlParams.get('name') || sessionStorage.getItem('playerName') || 'Player';
-sessionStorage.setItem('playerName', playerName);
 
 // UI elements
 const levelScreen = document.getElementById('levelScreen');
@@ -854,6 +990,207 @@ function sortStories(stories) {
     return [...newStories, ...oldStories];
 }
 
+
+async function loadMegaStoryParts(gid) {
+    // Build the URL using the spreadsheet ID and the GID from the sheet
+    const megaSheetUrl = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=${gid}&single=true&output=tsv`;
+    
+    try {
+        const response = await fetch(megaSheetUrl);
+        const tsvText = await response.text();
+        const lines = tsvText.trim().split('\n');
+        if (lines.length < 2) {
+            console.warn('Mega story sheet is empty');
+            return;
+        }
+        const headers = lines[0].split('\t');
+        megaParts = [];
+        for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split('\t');
+            const obj = {};
+            headers.forEach((h, idx) => {
+                obj[h.trim()] = (values[idx] || '').trim();
+            });
+            megaParts.push({
+                chapter: obj.Chapter || 'Chapter ?',
+                part: obj.Part,
+                title: obj.Title,
+                storyText: obj.StoryText,
+                audioURL: obj.AudioURL
+            });
+        }
+        // Sort by part number numerically
+        megaParts.sort((a, b) => (parseInt(a.part) || 0) - (parseInt(b.part) || 0));
+    } catch (err) {
+        console.error('Failed to load mega story parts:', err);
+        megaParts = [];
+    }
+}
+
+
+//-_-_-_-----------------------Mega Story Design------------------------_-_______//
+
+function setupMegaStoryUI(story) {
+    // Show the mega story controls (where the accordions live)
+    document.getElementById('megaStoryControls').style.display = 'block';
+    document.getElementById('megaStoryControlsBottom').style.display = 'block';
+
+    // Build both accordions (top and bottom)
+    buildAccordion();
+
+    // Load the first part (currentPartIndex is already 0 from startStory)
+    loadCurrentPart();
+
+    // Update navigation buttons (Prev/Next/Finish)
+    updateMegaButtons();
+}
+
+function loadCurrentPart() {
+    const part = megaParts[currentPartIndex];
+
+    // Update part title display
+    document.getElementById('currentPartTitle').textContent = 
+        part.title ? `${part.chapter || ''} – Part ${part.part}: ${part.title}` : `Part ${part.part}`;
+
+    // Insert story text with vocabulary pills
+    const content = document.getElementById('content-body');
+    const replaced = part.storyText.replace(/\[([^\]]+)\]/g, (match, word) => {
+        return `<span class="pill" data-word="${word}">${word}</span>`;
+    });
+    content.innerHTML = replaced;
+
+    // Handle audio
+    const heroPlayBtn = document.getElementById('heroPlayBtn');
+    const heroCanvas = document.getElementById('heroWaveCanvas');
+    heroCanvas.getContext('2d').clearRect(0, 0, heroCanvas.width, heroCanvas.height);
+    heroPlayBtn.className = 'play-btn';
+    stopActiveAudio();
+
+    const audioCapsule = document.getElementById('heroAudioCapsule');
+    if (part.audioURL && part.audioURL.trim() !== '') {
+        audioCapsule.style.display = 'flex';
+        if (window.currentMegaAudioPlayer) {
+            window.currentMegaAudioPlayer.stop();
+        }
+        window.currentMegaAudioPlayer = createAudioPlayer({
+            audioUrl: part.audioURL,
+            playBtn: heroPlayBtn,
+            canvas: heroCanvas,
+            waveColor: '#000000',
+            sentences: []
+        });
+    } else {
+        audioCapsule.style.display = 'none';
+    }
+
+    // Refresh both accordions to update the active part highlight
+    buildAccordion();
+
+    // Update the Previous/Next buttons
+    updateMegaButtons();
+}
+
+function updateMegaButtons() {
+    const prevBtn = document.getElementById('prevPart');
+    const nextBtn = document.getElementById('nextStory');
+    const finishBtn = document.getElementById('finishStory');
+
+    if (megaParts.length <= 1) {
+        // Single part — hide all part navigation
+        prevBtn.style.display = 'none';
+        nextBtn.textContent = '➡ Next Story';
+        nextBtn.style.display = 'inline-flex';
+        finishBtn.style.display = 'inline-flex';
+        // Next Story goes to next story in level (or all-done modal)
+        nextBtn.onclick = () => {
+            const nextIndex = currentStoryIndex + 1;
+            if (nextIndex < currentStories.length) {
+                startStory(nextIndex);
+            } else {
+                showAllDoneModal();
+            }
+        };
+        return;
+    }
+
+    // Multi‑part
+    prevBtn.style.display = (currentPartIndex > 0) ? 'inline-flex' : 'none';
+    finishBtn.style.display = 'inline-flex'; // always allow finish reading (shows summary)
+
+    if (currentPartIndex < megaParts.length - 1) {
+        nextBtn.textContent = '➡ Next Part';
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.onclick = () => {
+            currentPartIndex++;
+            loadCurrentPart();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+    } else {
+        // Last part
+        nextBtn.textContent = '🏁 Finish Mega Story';
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.onclick = () => {
+            // Trigger the finish reading summary
+            document.getElementById('finishStory').click();
+        };
+    }
+}
+// --------------------------- New Build with Accordion-----------------------//
+function buildAccordion() {
+    // Build both top and bottom accordions (identical)
+    ['accordionTop', 'accordionBottom'].forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+
+        // Group parts by chapter
+        const chapters = {};
+        megaParts.forEach((part, globalIndex) => {
+            const ch = part.chapter || 'Chapter ?';
+            if (!chapters[ch]) chapters[ch] = [];
+            chapters[ch].push({ ...part, globalIndex });
+        });
+
+        // Create accordion DOM
+        for (const [chapterName, parts] of Object.entries(chapters)) {
+            // Chapter header
+            const header = document.createElement('div');
+            header.className = 'chapter-header';
+            header.innerHTML = `${chapterName} <span class="arrow">▶</span>`;
+
+            // Parts list
+            const list = document.createElement('div');
+            list.className = 'parts-list';
+
+            parts.forEach(p => {
+                const row = document.createElement('div');
+                row.className = 'part-row';
+                if (p.globalIndex === currentPartIndex) row.classList.add('active');
+                row.textContent = `Part ${p.part} – ${p.title}`;
+                row.addEventListener('click', () => {
+                    currentPartIndex = p.globalIndex;
+                    loadCurrentPart();
+                    // Rebuild both accordions to refresh highlights and keep them in sync
+                    buildAccordion();
+                });
+                list.appendChild(row);
+            });
+
+            // Toggle open/close on header click
+            header.addEventListener('click', () => {
+                header.classList.toggle('open');
+                list.classList.toggle('open');
+            });
+
+            container.appendChild(header);
+            container.appendChild(list);
+        }
+    });
+}
+//----------------------------New Build End-----------------------------------//        
+//-_-_-_-----------------------Mega Story Design End------------------------_-_______//
+
+        
 // ═══════════════════════════════════════
 //  AUDIO PLAYER FACTORY
 // ═══════════════════════════════════════
@@ -1243,40 +1580,203 @@ function buildCards(stories) {
 // ═══════════════════════════════════════
 //  START A STORY
 // ═══════════════════════════════════════
-function startStory(index) {
+async function startStory(index) {
     currentStoryIndex = index;
     const story = currentStories[index];
-    document.getElementById('heroBanner').style.background = `linear-gradient(115deg, ${story.GradientStart || '#60be3e'} 0%, ${story.GradientEnd || '#89d35a'} 40%, #ffffff 90%)`;
+
+    // Reset mega story state
+    isMegaStory = false;
+    megaParts = [];
+    currentPartIndex = 0;
+    megaStoryGID = null;
+
+    // Check if this is a mega story
+    if (story.MegaStoryGID && story.MegaStoryGID.trim() !== '') {
+        isMegaStory = true;
+        megaStoryGID = story.MegaStoryGID.trim();
+        // Fetch parts from the dedicated sheet
+        await loadMegaStoryParts(megaStoryGID);
+    }
+
+    // Set up the hero banner (common to both types)
+    document.getElementById('heroBanner').style.background =
+        `linear-gradient(115deg, ${story.GradientStart || '#60be3e'} 0%, ${story.GradientEnd || '#89d35a'} 40%, #ffffff 90%)`;
     document.getElementById('heroTitle').textContent = story.Title;
     document.getElementById('heroDescription').textContent = story.Description || '';
     document.getElementById('heroLevelBadge').textContent = story.Level;
 
-    // clear previous audio in hero
+    // Clear previous audio in hero
     const heroPlayBtn = document.getElementById('heroPlayBtn');
     heroPlayBtn.className = 'play-btn';
     const heroCanvas = document.getElementById('heroWaveCanvas');
     heroCanvas.getContext('2d').clearRect(0, 0, heroCanvas.width, heroCanvas.height);
     stopActiveAudio();
 
-    // set story text with pill words
-    const content = document.getElementById('content-body');
-    const replaced = story.StoryText.replace(/\[([^\]]+)\]/g, (match, word) => {
-        return `<span class="pill" data-word="${word}">${word}</span>`;
-    });
-    content.innerHTML = replaced;
+    if (isMegaStory) {
+        // Set up mega story UI
+        setupMegaStoryUI(story);
+    } else {
+        // Normal story – hide mega controls
+        document.getElementById('megaStoryControls').style.display = 'none';
+        document.getElementById('megaStoryControlsBottom').style.display = 'none';
+        document.getElementById('prevPart').style.display = 'none';
+        document.getElementById('nextStory').textContent = '➡ Next Story';
+        document.getElementById('nextStory').style.display = 'inline-flex';
+        document.getElementById('currentPartTitle').textContent = '';
 
-    // wrap sentences for potential future sync (but not used yet)
-    const sentences = Array.from(content.querySelectorAll('.sentence')) || [];
-    // if you had sentence highlighting, you'd pass sentences; for now just pass empty
-
-    if (story.AudioURL) {
-        createAudioPlayer({
-            audioUrl: story.AudioURL,
-            playBtn: heroPlayBtn,
-            canvas: heroCanvas,
-            waveColor: '#000000',
-            sentences: sentences   // optional, can be empty
+        // Load story text (normal)
+        const content = document.getElementById('content-body');
+        const replaced = story.StoryText.replace(/\[([^\]]+)\]/g, (match, word) => {
+            return `<span class="pill" data-word="${word}">${word}</span>`;
         });
+        content.innerHTML = replaced;
+
+        // Setup audio if available (normal)
+        if (story.AudioURL) {
+            createAudioPlayer({
+                audioUrl: story.AudioURL,
+                playBtn: heroPlayBtn,
+                canvas: heroCanvas,
+                waveColor: '#000000',
+                sentences: []
+            });
+        } else {
+            document.getElementById('heroAudioCapsule').style.display = 'none';
+        }
+    }
+
+    showScreen(storyScreen);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}async function startStory(index) {
+    currentStoryIndex = index;
+    const story = currentStories[index];
+
+    // Reset mega story state
+    isMegaStory = false;
+    megaParts = [];
+    currentPartIndex = 0;
+    megaStoryGID = null;
+
+    // Check if this is a mega story
+    if (story.MegaStoryGID && story.MegaStoryGID.trim() !== '') {
+        isMegaStory = true;
+        megaStoryGID = story.MegaStoryGID.trim();
+        // Fetch parts from the dedicated sheet
+        await loadMegaStoryParts(megaStoryGID);
+    }
+
+    // Set up the hero banner (common to both types)
+    document.getElementById('heroBanner').style.background =
+        `linear-gradient(115deg, ${story.GradientStart || '#60be3e'} 0%, ${story.GradientEnd || '#89d35a'} 40%, #ffffff 90%)`;
+    document.getElementById('heroTitle').textContent = story.Title;
+    document.getElementById('heroDescription').textContent = story.Description || '';
+    document.getElementById('heroLevelBadge').textContent = story.Level;
+
+    // Clear previous audio in hero
+    const heroPlayBtn = document.getElementById('heroPlayBtn');
+    heroPlayBtn.className = 'play-btn';
+    const heroCanvas = document.getElementById('heroWaveCanvas');
+    heroCanvas.getContext('2d').clearRect(0, 0, heroCanvas.width, heroCanvas.height);
+    stopActiveAudio();
+
+    if (isMegaStory) {
+        // Set up mega story UI
+        setupMegaStoryUI(story);
+    } else {
+        // Normal story – hide mega controls
+        document.getElementById('megaStoryControls').style.display = 'none';
+        document.getElementById('megaStoryControlsBottom').style.display = 'none';
+        document.getElementById('prevPart').style.display = 'none';
+        document.getElementById('nextStory').textContent = '➡ Next Story';
+        document.getElementById('nextStory').style.display = 'inline-flex';
+        document.getElementById('currentPartTitle').textContent = '';
+
+        // Load story text (normal)
+        const content = document.getElementById('content-body');
+        const replaced = story.StoryText.replace(/\[([^\]]+)\]/g, (match, word) => {
+            return `<span class="pill" data-word="${word}">${word}</span>`;
+        });
+        content.innerHTML = replaced;
+
+        // Setup audio if available (normal)
+        if (story.AudioURL) {
+            createAudioPlayer({
+                audioUrl: story.AudioURL,
+                playBtn: heroPlayBtn,
+                canvas: heroCanvas,
+                waveColor: '#000000',
+                sentences: []
+            });
+        } else {
+            document.getElementById('heroAudioCapsule').style.display = 'none';
+        }
+    }
+
+    showScreen(storyScreen);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}async function startStory(index) {
+    currentStoryIndex = index;
+    const story = currentStories[index];
+
+    // Reset mega story state
+    isMegaStory = false;
+    megaParts = [];
+    currentPartIndex = 0;
+    megaStoryGID = null;
+
+    // Check if this is a mega story
+    if (story.MegaStoryGID && story.MegaStoryGID.trim() !== '') {
+        isMegaStory = true;
+        megaStoryGID = story.MegaStoryGID.trim();
+        // Fetch parts from the dedicated sheet
+        await loadMegaStoryParts(megaStoryGID);
+    }
+
+    // Set up the hero banner (common to both types)
+    document.getElementById('heroBanner').style.background =
+        `linear-gradient(115deg, ${story.GradientStart || '#60be3e'} 0%, ${story.GradientEnd || '#89d35a'} 40%, #ffffff 90%)`;
+    document.getElementById('heroTitle').textContent = story.Title;
+    document.getElementById('heroDescription').textContent = story.Description || '';
+    document.getElementById('heroLevelBadge').textContent = story.Level;
+
+    // Clear previous audio in hero
+    const heroPlayBtn = document.getElementById('heroPlayBtn');
+    heroPlayBtn.className = 'play-btn';
+    const heroCanvas = document.getElementById('heroWaveCanvas');
+    heroCanvas.getContext('2d').clearRect(0, 0, heroCanvas.width, heroCanvas.height);
+    stopActiveAudio();
+
+    if (isMegaStory) {
+        // Set up mega story UI
+        setupMegaStoryUI(story);
+    } else {
+        // Normal story – hide mega controls
+        document.getElementById('megaStoryControls').style.display = 'none';
+        document.getElementById('megaStoryControlsBottom').style.display = 'none';
+        document.getElementById('prevPart').style.display = 'none';
+        document.getElementById('nextStory').textContent = '➡ Next Story';
+        document.getElementById('nextStory').style.display = 'inline-flex';
+        document.getElementById('currentPartTitle').textContent = '';
+
+        // Load story text (normal)
+        const content = document.getElementById('content-body');
+        const replaced = story.StoryText.replace(/\[([^\]]+)\]/g, (match, word) => {
+            return `<span class="pill" data-word="${word}">${word}</span>`;
+        });
+        content.innerHTML = replaced;
+
+        // Setup audio if available (normal)
+        if (story.AudioURL) {
+            createAudioPlayer({
+                audioUrl: story.AudioURL,
+                playBtn: heroPlayBtn,
+                canvas: heroCanvas,
+                waveColor: '#000000',
+                sentences: []
+            });
+        } else {
+            document.getElementById('heroAudioCapsule').style.display = 'none';
+        }
     }
 
     showScreen(storyScreen);
@@ -1311,8 +1811,13 @@ document.querySelectorAll('.level-btn').forEach(btn => {
 });
 
 document.getElementById('megaStoriesBtn').addEventListener('click', () => {
-    showScreen(document.getElementById('megaScreen'));
+    currentLevel = 'Mega';
+    document.getElementById('levelTitle').textContent = 'Mega Stories';
+    currentStories = sortStories(allStories.filter(s => s.Level === 'Mega'));
+    buildCards(currentStories);
+    showScreen(listScreen);
 });
+
 document.getElementById('megaBackToLevels').addEventListener('click', () => showScreen(levelScreen));
 document.getElementById('backToLevels').addEventListener('click', () => showScreen(levelScreen));
 
@@ -1339,6 +1844,7 @@ document.getElementById('finishStory').addEventListener('click', () => {
 
 // Next story
 document.getElementById('nextStory').addEventListener('click', () => {
+    if (isMegaStory) return;
     if (currentStories.length === 0) return;
     const nextIndex = currentStoryIndex + 1;
     if (nextIndex < currentStories.length) {
@@ -1393,12 +1899,24 @@ document.getElementById('allDoneModal').addEventListener('click', (e) => {
 
 // Floating buttons
 floatingHubBtn.addEventListener('click', () => {
-    window.location.href = '/fluent/hub.html?name=' + encodeURIComponent(playerName);
+    window.location.href = 'hub.html';
 });
 document.getElementById('floatingBackBtn').addEventListener('click', () => {
     showScreen(levelScreen);
 });
 
+
+
+        // Previous Part (mega story)
+document.getElementById('prevPart').addEventListener('click', () => {
+    if (isMegaStory && currentPartIndex > 0) {
+        currentPartIndex--;
+        loadCurrentPart();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+});
+        
+    
 // ═══════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════
@@ -1409,6 +1927,5 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
     </script>
-
 </body>
 </html>
