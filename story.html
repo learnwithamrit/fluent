@@ -851,7 +851,10 @@ const modalWord = document.getElementById('modalWord');
 const modalDefinition = document.getElementById('modalDefinition');
 const modalExample = document.getElementById('modalExample');
 const floatingHubBtn = document.getElementById('floatingHubBtn');
-
+// Read the player name from the URL or sessionStorage
+const urlParams = new URLSearchParams(window.location.search);
+const playerName = urlParams.get('name') || sessionStorage.getItem('playerName') || 'Player';
+sessionStorage.setItem('playerName', playerName);
 // ═══════════════════════════════════════
 //  MODAL ANIMATION (pill definition)
 // ═══════════════════════════════════════
@@ -1898,7 +1901,7 @@ document.getElementById('allDoneModal').addEventListener('click', (e) => {
 
 // Floating buttons
 floatingHubBtn.addEventListener('click', () => {
-    window.location.href = 'hub.html';
+    window.location.href = 'hub.html?name=' + encodeURIComponent(playerName);
 });
 document.getElementById('floatingBackBtn').addEventListener('click', () => {
     showScreen(levelScreen);
