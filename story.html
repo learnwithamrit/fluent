@@ -1022,7 +1022,13 @@ async function loadMegaStoryParts(gid) {
             });
         }
         // Sort by part number numerically
-        megaParts.sort((a, b) => (parseInt(a.part) || 0) - (parseInt(b.part) || 0));
+        // Sort by chapter (numeric if possible), then by part (numeric)
+megaParts.sort((a, b) => {
+    const chA = parseInt(a.chapter.match(/\d+/)?.[0] || a.chapter, 10);
+    const chB = parseInt(b.chapter.match(/\d+/)?.[0] || b.chapter, 10);
+    if (chA !== chB) return chA - chB;
+    return (parseInt(a.part) || 0) - (parseInt(b.part) || 0);
+});
     } catch (err) {
         console.error('Failed to load mega story parts:', err);
         megaParts = [];
@@ -1097,13 +1103,12 @@ function updateMegaButtons() {
     const nextBtn = document.getElementById('nextStory');
     const finishBtn = document.getElementById('finishStory');
 
+    // If only one part, hide all part nav and keep normal next story
     if (megaParts.length <= 1) {
-        // Single part — hide all part navigation
         prevBtn.style.display = 'none';
         nextBtn.textContent = '➡ Next Story';
         nextBtn.style.display = 'inline-flex';
         finishBtn.style.display = 'inline-flex';
-        // Next Story goes to next story in level (or all-done modal)
         nextBtn.onclick = () => {
             const nextIndex = currentStoryIndex + 1;
             if (nextIndex < currentStories.length) {
@@ -1115,27 +1120,54 @@ function updateMegaButtons() {
         return;
     }
 
-    // Multi‑part
-    prevBtn.style.display = (currentPartIndex > 0) ? 'inline-flex' : 'none';
-    finishBtn.style.display = 'inline-flex'; // always allow finish reading (shows summary)
+    // Show previous button only if not on first part of first chapter
+    const current = megaParts[currentPartIndex];
+    const currentChapter = current.chapter;
+    const partsInChapter = megaParts.filter(p => p.chapter === currentChapter);
+    const indexInChapter = partsInChapter.indexOf(current);
+    const isFirstPartInChapter = indexInChapter === 0;
+    const isLastPartInChapter = indexInChapter === partsInChapter.length - 1;
 
-    if (currentPartIndex < megaParts.length - 1) {
+    // Determine if there is a previous part somewhere
+    const hasPrevious = currentPartIndex > 0;
+    prevBtn.style.display = hasPrevious ? 'inline-flex' : 'none';
+
+    // Determine the next part
+    let nextPartIndex = -1;
+    if (!isLastPartInChapter) {
+        // Next part in same chapter
+        nextPartIndex = megaParts.findIndex(p =>
+            p.chapter === currentChapter &&
+            parseInt(p.part) === parseInt(partsInChapter[indexInChapter + 1].part)
+        );
+    } else {
+        // Last part in chapter → go to first part of next chapter
+        const chapters = [...new Set(megaParts.map(p => p.chapter))];
+        const currentChapterIndex = chapters.indexOf(currentChapter);
+        if (currentChapterIndex < chapters.length - 1) {
+            const nextChapter = chapters[currentChapterIndex + 1];
+            nextPartIndex = megaParts.findIndex(p => p.chapter === nextChapter && p.part === '1');
+        }
+    }
+
+    if (nextPartIndex !== -1) {
         nextBtn.textContent = '➡ Next Part';
         nextBtn.style.display = 'inline-flex';
         nextBtn.onclick = () => {
-            currentPartIndex++;
+            currentPartIndex = nextPartIndex;
             loadCurrentPart();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
     } else {
-        // Last part
+        // No next part anywhere → finish mega story
         nextBtn.textContent = '🏁 Finish Mega Story';
         nextBtn.style.display = 'inline-flex';
         nextBtn.onclick = () => {
-            // Trigger the finish reading summary
             document.getElementById('finishStory').click();
         };
     }
+
+    finishBtn.style.display = 'inline-flex';
 }
 // --------------------------- New Build with Accordion-----------------------//
 function buildAccordion() {
@@ -1911,11 +1943,37 @@ document.getElementById('floatingBackBtn').addEventListener('click', () => {
 
         // Previous Part (mega story)
 document.getElementById('prevPart').addEventListener('click', () => {
-    if (isMegaStory && currentPartIndex > 0) {
-        currentPartIndex--;
-        loadCurrentPart();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!isMegaStory || currentPartIndex <= 0) return;
+
+    const current = megaParts[currentPartIndex];
+    const currentChapter = current.chapter;
+    const partsInChapter = megaParts.filter(p => p.chapter === currentChapter);
+    const indexInChapter = partsInChapter.indexOf(current);
+
+    if (indexInChapter > 0) {
+        // Previous part in same chapter
+        currentPartIndex = megaParts.findIndex(p =>
+            p.chapter === currentChapter &&
+            parseInt(p.part) === parseInt(partsInChapter[indexInChapter - 1].part)
+        );
+    } else {
+        // First part in chapter → go to last part of previous chapter
+        const chapters = [...new Set(megaParts.map(p => p.chapter))];
+        const currentChapterIndex = chapters.indexOf(currentChapter);
+        if (currentChapterIndex > 0) {
+            const prevChapter = chapters[currentChapterIndex - 1];
+            const partsInPrevChapter = megaParts.filter(p => p.chapter === prevChapter);
+            if (partsInPrevChapter.length > 0) {
+                const lastPart = partsInPrevChapter[partsInPrevChapter.length - 1];
+                currentPartIndex = megaParts.findIndex(p =>
+                    p.chapter === prevChapter && parseInt(p.part) === parseInt(lastPart.part)
+                );
+            }
+        }
     }
+
+    loadCurrentPart();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
         
     
