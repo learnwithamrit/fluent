@@ -251,6 +251,14 @@ body {
 #topic-conversation .card-title { color: #1a1000; }
 #topic-conversation .card-desc  { color: #3a2800; }
 
+/* ── Topic 6: Proverbs ── */
+#topic-proverbs {
+  background: linear-gradient(135deg, #ef4565 0%, #c42a47 100%);
+  color: #3d0010;
+}
+#topic-proverbs .card-title { color: #0d0004; }
+#topic-proverbs .card-desc  { color: #5a0018; }
+
 /* Footer */
 #page-footer {
   width: 100%;
@@ -319,13 +327,40 @@ body {
       <div class="card-icon">🌐</div>
       <div class="card-text">
         <div class="card-title">The Phraseosphere</div>
-        <div class="card-desc">Phrasal verbs, fixed expressions, and the language that holds English together.</div>
+        <div class="card-desc">Idioms, fixed expressions, and the language that holds English together.</div>
       </div>
       <div class="card-arrow">›</div>
       <div class="accordion-body" id="phraseosphere-accordion-body">
         <!-- dynamically filled -->
       </div>
     </div>
+
+     <!-- ── TOPIC 6: PROVERBS ──
+     Red/coral card
+     Change onclick target when page is ready
+─────────────────────────────────────────── -->
+<div class="topic-card" id="topic-proverbs"  onclick="comingSoon('Proverbs')" role="button" tabindex="0" aria-label="Proverbs — coming soon">
+
+  <!-- Icon -->
+  <div class="card-icon">📜</div>
+
+  <!-- Text -->
+  <div class="card-text">
+    <div class="card-title">Proverbs</div>
+    <div class="card-desc">
+      Timeless sayings and their meanings.
+      Wisdom passed down through generations.
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="card-arrow">›</div>
+
+  <!-- Badge — remove when live -->
+  <div class="card-badge">Soon</div>
+
+</div>
+<!-- END TOPIC 6 -->
 
     <!-- ZOOSPHERE -->
     <div class="topic-card" id="topic-zoosphere" onclick="comingSoon('The Zoosphere')" role="button" tabindex="0">
