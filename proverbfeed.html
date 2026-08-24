@@ -380,6 +380,55 @@
             border-color: var(--acc);
         }
 
+        /* Pagination controls */
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: var(--gap-md) 0 10px;
+}
+
+.page-indicator {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--txt);
+    min-width: 90px;
+    text-align: center;
+}
+
+.pagination-jump {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: var(--gap-md);
+}
+
+.jump-label {
+    font-size: var(--fs-xs);
+    color: var(--mut);
+    font-weight: 600;
+    letter-spacing: .3px;
+}
+
+.jump-select {
+    background: var(--sur2);
+    border: 1.5px solid var(--brd);
+    color: var(--txt);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: var(--fs-sm);
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.jump-select:focus {
+    border-color: var(--acc);
+}
+
         #page-footer {
             width: 100%;
             background: var(--sur);
@@ -592,25 +641,49 @@
         }
 
         // ── Render pagination buttons ──
-        function renderPagination() {
-            const totalPages = Math.ceil(proverbs.length / itemsPerPage);
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
+function renderPagination() {
+    const totalPages = Math.ceil(proverbs.length / itemsPerPage);
+    const pagination = document.getElementById('pagination');
 
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
-                btn.textContent = i;
-                btn.addEventListener('click', () => {
-                    renderPage(i);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-                pagination.appendChild(btn);
-            }
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
 
-            // Update total count
-            document.getElementById('totalCount').textContent = proverbs.length;
-        }
+    pagination.innerHTML = `
+        <div class="pagination-controls">
+            <button class="page-btn" id="prevPage" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>
+            <span class="page-indicator">Page ${currentPage} of ${totalPages}</span>
+            <button class="page-btn" id="nextPage" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>
+        </div>
+        <div class="pagination-jump">
+            <label for="jumpToPage" class="jump-label">Jump to</label>
+            <select id="jumpToPage" class="jump-select">
+                ${Array.from({ length: totalPages }, (_, i) => `
+                    <option value="${i + 1}" ${i + 1 === currentPage ? 'selected' : ''}>${i + 1}</option>
+                `).join('')}
+            </select>
+        </div>
+    `;
+
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        renderPage(currentPage - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+    if (currentPage < totalPages) {
+        renderPage(currentPage + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+});
+
+    document.getElementById('jumpToPage').addEventListener('change', (e) => {
+        renderPage(parseInt(e.target.value));
+    });
+}
 
         // ── Load data from Google Sheet ──
         async function loadProverbs() {
