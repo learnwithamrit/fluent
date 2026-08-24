@@ -663,6 +663,7 @@
         // ── Render pagination buttons ──
 function renderPagination() {
     const totalPages = Math.ceil(proverbs.length / itemsPerPage);
+    document.getElementById('totalCount').textContent = proverbs.length;
     const pagination = document.getElementById('pagination');
 
     if (totalPages <= 1) {
