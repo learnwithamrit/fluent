@@ -181,7 +181,9 @@
             margin-top: var(--gap-md);
             flex-wrap: wrap;
         }
-
+        #proverbs-container {
+    scroll-margin-top: 80px;   /* keeps the navbar from covering the first card */
+        }
         .meta-badge {
             font-size: var(--fs-xs);
             color: var(--mut);
@@ -668,25 +670,33 @@ function renderPagination() {
         </div>
     `;
 
-document.getElementById('prevPage').addEventListener('click', () => {
-    if (currentPage > 1) {
-        renderPage(currentPage - 1);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-});
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            renderPage(currentPage - 1);
+            scrollToProverbs();          // ✅ scroll to first proverb
+        }
+    });
 
-document.getElementById('nextPage').addEventListener('click', () => {
-    if (currentPage < totalPages) {
-        renderPage(currentPage + 1);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-});
+    document.getElementById('nextPage').addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            renderPage(currentPage + 1);
+            scrollToProverbs();          // ✅ scroll to first proverb
+        }
+    });
 
     document.getElementById('jumpToPage').addEventListener('change', (e) => {
         renderPage(parseInt(e.target.value));
+        scrollToProverbs();              // ✅ scroll to first proverb
     });
 }
 
+function scrollToProverbs() {
+    const container = document.getElementById('proverbs-container');
+    if (container) {
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+        
         // ── Load data from Google Sheet ──
         async function loadProverbs() {
             try {
