@@ -196,6 +196,16 @@
             gap: 5px;
         }
 
+        .big-slash {
+        display: inline-block;
+        font-size: var(--fs-lg);
+        font-weight: 900;
+        color: var(--acc);
+        margin: 6px 0;
+        letter-spacing: 2px;
+        opacity: 0.8;
+        }
+        
         #content-body {
             flex: 1;
             padding-bottom: var(--gap-lg);
@@ -612,20 +622,26 @@
             const start = (page - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageItems = proverbs.slice(start, end);
-
+        
             if (pageItems.length === 0) {
                 container.innerHTML = '<div class="info-box note"><span class="info-icon">📭</span><span class="info-text">No proverbs found.</span></div>';
                 return;
             }
-
+        
             container.innerHTML = pageItems.map(p => {
-                // Split semicolon-separated variants and join with bullet and line break
                 const bengaliVariants = p.bengali.split(';').map(s => s.trim()).filter(Boolean);
                 const englishVariants = p.english.split(';').map(s => s.trim()).filter(Boolean);
-
-                const bengaliText = bengaliVariants.map(v => escapeHTML(v)).join(' • ');
-                const englishText = englishVariants.map(v => escapeHTML(v)).join('<br>• ');
-
+        
+                // Bengali: each variant on its own line, separated by a large slash
+                const bengaliText = bengaliVariants
+                    .map(v => escapeHTML(v))
+                    .join('<br><span class="big-slash">/</span><br>');
+        
+                // English: all variants start with bullet
+                const englishText = englishVariants
+                    .map(v => '• ' + escapeHTML(v))
+                    .join('<br>');
+        
                 return `
                     <div class="example-card">
                         <div class="example-phrase">${bengaliText}</div>
@@ -633,7 +649,7 @@
                     </div>
                 `;
             }).join('');
-
+        
             renderPagination();
         }
 
