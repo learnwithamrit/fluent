@@ -447,6 +447,61 @@
         #footer-mail { font-size: var(--fs-xs); color: var(--mut); text-decoration: none; transition: color .2s; display: flex; align-items: center; gap: 6px; }
         #footer-mail:hover { color: var(--acc); }
         #footer-copy { font-size: var(--fs-xs); color: var(--brd); }
+
+        /* ── Larger screens — expand game area ── */
+            @media (min-width: 768px) {
+                :root {
+                    --max-w: 900px;   /* was 680px */
+                }
+            
+                .quiz-card,
+                .options-list,
+                .results-card {
+                    max-width: 700px;   /* increase card widths */
+                }
+            
+                .option-btn {
+                    font-size: var(--fs-md);
+                    padding: 16px 20px;
+                }
+            
+                .quiz-bengali {
+                    font-size: var(--fs-xl);
+                }
+            
+                .results-score {
+                    font-size: 4rem;
+                }
+            }
+            
+            @media (min-width: 1024px) {
+                :root {
+                    --max-w: 1100px;   /* even wider on desktop */
+                }
+            
+                .quiz-card,
+                .options-list,
+                .results-card {
+                    max-width: 800px;
+                }
+            
+                .option-btn {
+                    font-size: var(--fs-lg);
+                }
+            }
+            
+            @media (min-width: 1440px) {
+                :root {
+                    --max-w: 1300px;   /* ultrawide screens */
+                }
+            
+                .quiz-card,
+                .options-list,
+                .results-card {
+                    max-width: 900px;
+                }
+            }
+        
     </style>
 </head>
 <body>
