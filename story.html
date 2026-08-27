@@ -12,7 +12,7 @@
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="images/icon-180.png">
     <meta name="theme-color" content="#ff8906">
-    <style>
+   <style>
         /* ═══════════════════════════════════════
            DESIGN TOKENS (Fluent template)
         ════════════════════════════════════════ */
@@ -150,18 +150,18 @@
            STORY LIST (cards)
         ════════════════════════════════════════ */
 /* Story card wrapper (gap between the two cards) */
-.story-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    margin-bottom: 30px;
-    max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.story-wrapper:active { transform: scale(0.98); }
+        .story-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            margin-bottom: 30px;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .story-wrapper:active { transform: scale(0.98); }
 
 @media (min-width: 600px) {
     .story-wrapper {
@@ -192,98 +192,98 @@
     }
 }
 /* Top info card */
-.story-info-card {
-    border-radius: 32px;
-    padding: 28px 24px 40px 24px;
-    color: #000;
-    background: linear-gradient(115deg, #60be3e 0%, #89d35a 40%, #ffffff 90%);
-    /* gradient will be overridden inline by JS */
-}
-
-/* Badges row */
-.card-badge-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.9);
-    color: #000;
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.7rem;
-    letter-spacing: 0.5px;
-}
-.badge.new-badge {
-    background: var(--acc);
-    color: #0d0d1a;
-    font-weight: 900;
-}
-
-/* Story title */
-.card-title {
-    font-size: 1.8rem;
-    font-weight: 900;
-    line-height: 1.2;
-    margin-bottom: 8px;
-    color: #000;
-}
-
-/* Story description */
-.card-description {
-    font-size: 0.85rem;
-    opacity: 0.8;
-    line-height: 1.5;
-    color: #1a1a1a;
-}
-
-/* Bottom audio card */
-.audio-card {
-    border-radius: 50px;
-    padding: 20px 50px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    background: linear-gradient(115deg, #60be3e 0%, #89d35a 40%, #ffffff 90%);
-    /* gradient will be overridden inline by JS */
-}
-
-/* Play button (triangle) */
-.play-btn {
-    width: 0;
-    height: 0;
-    border-top: 14px solid transparent;
-    border-bottom: 14px solid transparent;
-    border-left: 22px solid #fff;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: transform 0.2s;
-}
-.play-btn.pause {
-    border: none;
-    width: 20px;
-    height: 20px;
-    background: #fff;
-    border-radius: 3px;
-}
-
-/* Wave container */
-.wave-container {
-    flex: 1;
-    height: 50px;
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
-}
-.wave-container canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
+            .story-info-card {
+                border-radius: 32px;
+                padding: 28px 24px 40px 24px;
+                color: #000;
+                background: linear-gradient(115deg, #60be3e 0%, #89d35a 40%, #ffffff 90%);
+                /* gradient will be overridden inline by JS */
+            }
+            
+            /* Badges row */
+            .card-badge-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            
+            .badge {
+                display: inline-block;
+                background: rgba(255,255,255,0.9);
+                color: #000;
+                padding: 4px 14px;
+                border-radius: 20px;
+                font-weight: 700;
+                font-size: 0.7rem;
+                letter-spacing: 0.5px;
+            }
+            .badge.new-badge {
+                background: var(--acc);
+                color: #0d0d1a;
+                font-weight: 900;
+            }
+            
+            /* Story title */
+            .card-title {
+                font-size: 1.8rem;
+                font-weight: 900;
+                line-height: 1.2;
+                margin-bottom: 8px;
+                color: #000;
+            }
+            
+            /* Story description */
+            .card-description {
+                font-size: 0.85rem;
+                opacity: 0.8;
+                line-height: 1.5;
+                color: #1a1a1a;
+            }
+            
+            /* Bottom audio card */
+            .audio-card {
+                border-radius: 50px;
+                padding: 20px 50px;
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                background: linear-gradient(115deg, #60be3e 0%, #89d35a 40%, #ffffff 90%);
+                /* gradient will be overridden inline by JS */
+            }
+            
+            /* Play button (triangle) */
+            .play-btn {
+                width: 0;
+                height: 0;
+                border-top: 14px solid transparent;
+                border-bottom: 14px solid transparent;
+                border-left: 22px solid #fff;
+                cursor: pointer;
+                flex-shrink: 0;
+                transition: transform 0.2s;
+            }
+            .play-btn.pause {
+                border: none;
+                width: 20px;
+                height: 20px;
+                background: #fff;
+                border-radius: 3px;
+            }
+            
+            /* Wave container */
+            .wave-container {
+                flex: 1;
+                height: 50px;
+                position: relative;
+                cursor: pointer;
+                overflow: hidden;
+            }
+            .wave-container canvas {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
 
         /* Audio player inside card */
         .audio-player-mini {
@@ -328,6 +328,15 @@
         /* ═══════════════════════════════════════
            STORY READING SCREEN
         ════════════════════════════════════════ */
+        /* Subtle surface and border for the story content wrapper */
+        .story-content-wrapper {
+            background: rgba(255, 255, 255, 0.03);      /* very faint light overlay */
+            border: 1px solid rgba(255, 255, 255, 0.08); /* faint, soft border */
+            border-radius: 16px;                         /* optional rounded corners */
+            padding: 30px 20px 20px;                     /* existing padding remains */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);   /* optional gentle shadow */
+        }
+        
         #storyScreen {
             width: 100%;
             display: none;
@@ -478,135 +487,153 @@
 
 
 /* Part selector styling (matches Fluent theme) */
-.part-select {
-  background: var(--sur2);
-  color: var(--txt);
-  border: 1.5px solid var(--brd);
-  border-radius: 12px;
-  padding: 8px 14px;
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 0.9em;
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.part-select:hover { border-color: var(--acc); }
-.part-select option {
-  background: var(--sur);
-  color: var(--txt);
-}
+        .part-select {
+          background: var(--sur2);
+          color: var(--txt);
+          border: 1.5px solid var(--brd);
+          border-radius: 12px;
+          padding: 8px 14px;
+          font-family: inherit;
+          font-weight: 600;
+          font-size: 0.9em;
+          cursor: pointer;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .part-select:hover { border-color: var(--acc); }
+        .part-select option {
+          background: var(--sur);
+          color: var(--txt);
+        }
 
         
-
-.playhead {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 14px;
-    height: 14px;
-    background: #ff8906;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    pointer-events: auto;
-    cursor: pointer;
-    z-index: 10;
-}
-.story-word.highlight {
-    background: rgba(255, 137, 6, 0.5);
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-
         
-#floatingBackBtn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: fixed;
-    bottom: 85px;          /* 85px from bottom, above the hub (25px + 48px height + 12px gap) */
-    right: 25px;
-    height: 48px;
-    padding: 0 20px;
-    border-radius: 40px;
-    background: var(--sur2);
-    color: var(--txt);
-    border: 1.5px solid var(--brd);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-    font-size: 0.9em;
-    font-weight: 800;
-    cursor: pointer;
-    z-index: 199;          /* just below the hub button's 200 */
-    transition: transform 0.2s;
-}
-#floatingBackBtn:hover {
-    transform: scale(1.05);
-    border-color: var(--acc);
-    color: var(--acc);
-}
+        .playhead {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: #ff8906;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            pointer-events: auto;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .story-word.highlight {
+            background: rgba(255, 137, 6, 0.5);
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        
+                
+        #floatingBackBtn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: fixed;
+            bottom: 85px;          /* 85px from bottom, above the hub (25px + 48px height + 12px gap) */
+            right: 25px;
+            height: 48px;
+            padding: 0 20px;
+            border-radius: 40px;
+            background: var(--sur2);
+            color: var(--txt);
+            border: 1.5px solid var(--brd);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+            font-size: 0.9em;
+            font-weight: 800;
+            cursor: pointer;
+            z-index: 199;          /* just below the hub button's 200 */
+            transition: transform 0.2s;
+        }
+        #floatingBackBtn:hover {
+            transform: scale(1.05);
+            border-color: var(--acc);
+            color: var(--acc);
+        }
+        
+        
+        
+        
+        /* Accordion container */
+        .accordion {
+            margin: 15px 0;
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+        }
+        
+        /* Chapter header */
+        .chapter-header {
+            background: var(--sur);
+            border: 1px solid var(--brd);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            box-sizing: border-box;
+            align-items: center;
+            color: var(--txt);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .chapter-header:hover { background: var(--sur2); }
+        .chapter-header .arrow {
+            font-size: 0.8em;
+            transition: transform 0.2s;
+            margin-left: auto;
+        }
+        .chapter-header.open .arrow {
+            transform: rotate(90deg);
+        }
+        
+        /* Parts list (hidden by default) */
+        .parts-list {
+            display: none;
+            margin-left: 16px;
+            margin-bottom: 10px;
+        }
+        .parts-list.open {
+            display: block;
+        }
+        
+        /* Individual part row */
+        .part-row {
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            color: var(--mut);
+            transition: background 0.2s;
+        }
+        .part-row:hover { background: var(--sur2); }
+        .part-row.active {
+            background: var(--acc);
+            color: #0d0d1a;
+            font-weight: 700;
+        }
 
-
-
-/* Accordion Container */
-/* Accordion container */
-.accordion {
-    margin: 15px 0;
-}
-
-/* Chapter header */
-.chapter-header {
-    background: var(--sur);
-    border: 1px solid var(--brd);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--txt);
-    transition: background 0.2s;
-    user-select: none;
-}
-.chapter-header:hover { background: var(--sur2); }
-.chapter-header .arrow {
-    font-size: 0.8em;
-    transition: transform 0.2s;
-}
-.chapter-header.open .arrow {
-    transform: rotate(90deg);
-}
-
-/* Parts list (hidden by default) */
-.parts-list {
-    display: none;
-    margin-left: 16px;
-    margin-bottom: 10px;
-}
-.parts-list.open {
-    display: block;
-}
-
-/* Individual part row */
-.part-row {
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin-bottom: 4px;
-    cursor: pointer;
-    color: var(--mut);
-    transition: background 0.2s;
-}
-.part-row:hover { background: var(--sur2); }
-.part-row.active {
-    background: var(--acc);
-    color: #0d0d1a;
-    font-weight: 700;
-}
+        /* Small fix for chapter button selector */
+        #megaStoryControls,
+        #megaStoryControlsBottom {
+            width: 100%;
+            align-self: stretch;
+            box-sizing: border-box;
+        }
 /* Accordion End */
 
-        
+        #storyChapterTitle,
+        #storyPartTitle {
+            text-align: center;
+        }
+            
         #page-footer {
             width: 100%;
             background: var(--sur);
@@ -648,6 +675,25 @@
         #footer-copy {
             font-size: var(--fs-xs);
             color: var(--brd);
+        }
+
+
+        /* Story content wrapper – centres text and gives breathing room */
+        .story-content-wrapper {
+            width: 100%;
+            max-width: 680px;           /* default for mobile/tablet */
+            margin: 0 auto;
+            padding: 30px 20px 20px;
+            box-sizing: border-box;
+        }
+        
+        /* New part title inside the wrapper */
+        #storyPartTitle {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--acc);
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         /* ═══════════════════════════════════════
@@ -697,6 +743,17 @@
             .hero-banner { padding: 40px 16px 60px; }
             .audio-capsule { height: 60px; padding: 0 20px; }
         }
+        /* On desktop, expand the wrapper */
+        @media (min-width: 1200px) {
+            .story-content-wrapper {
+                max-width: 960px;        /* you can adjust this */
+                padding: 40px 40px 30px;
+            }
+        }
+
+        #currentPartTitle {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -734,24 +791,28 @@
         </header>
 
         <!-- Mega story part selector & info (hidden by default) -->
-<div id="megaStoryControls" style="display:none;">
-    <div class="accordion" id="accordionTop"></div>
-    <p id="currentPartTitle" style="color:var(--acc); font-weight:700; text-align:center; margin-bottom:10px;"></p>
-  <!-- Top part selector -->
-  <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin:20px 0;">
-   
-  </div>
-  <!-- Current part title (shown above the story text) -->
-  <p id="currentPartTitle" style="color:var(--acc); font-weight:700; text-align:center; margin-bottom:10px;"></p>
-</div>
+        <div id="megaStoryControls" style="display:none;">
+            <div class="accordion" id="accordionTop"></div>
+            <p id="currentPartTitle" style="color:var(--acc); font-weight:700; text-align:center; margin-bottom:10px;"></p>
+          <!-- Top part selector -->
+          <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin:20px 0;">
+           
+          </div>
+          <!-- Current part title (shown above the story text) -->
+          <p id="currentPartTitle" style="color:var(--acc); font-weight:700; text-align:center; margin-bottom:10px;"></p>
+        </div>
         <div class="audio-capsule" id="heroAudioCapsule">
             <div class="play-btn" id="heroPlayBtn"></div>
             <div class="wave-container" id="heroWaveContainer">
                 <canvas id="heroWaveCanvas"></canvas>
             </div>
         </div>
-            <main id="content-body"></main>
-                    <!-- Bottom part selector (inside story-buttons area for convenience) -->
+               <div class="story-content-wrapper">
+                    <h3 id="storyChapterTitle" style="display:none; text-align:center; font-size:1.2rem; color:var(--acc); margin-bottom:5px;"></h3>
+                    <h2 id="storyPartTitle" style="display:none; text-align:center; margin-bottom:20px;"></h2>
+                    <main id="content-body"></main>
+                </div>
+            <!-- Bottom part selector (inside story-buttons area for convenience) -->
             <div id="megaStoryControlsBottom" style="display:none; width:100%; text-align:center; margin-bottom:15px;">
                 <div class="accordion" id="accordionBottom"></div>
              
@@ -1055,11 +1116,25 @@ function setupMegaStoryUI(story) {
 
 function loadCurrentPart() {
     const part = megaParts[currentPartIndex];
-
+    // Set chapter title inside the wrapper
+    const chapterTitleEl = document.getElementById('storyChapterTitle');
+    if (part.chapter) {
+        chapterTitleEl.style.display = 'block';
+        chapterTitleEl.textContent = part.chapter;
+    } else {
+        chapterTitleEl.style.display = 'none';
+    }
     // Update part title display
     document.getElementById('currentPartTitle').textContent = 
         part.title ? `${part.chapter || ''} – Part ${part.part}: ${part.title}` : `Part ${part.part}`;
-
+    // Set the new part title inside the wrapper
+        const newPartTitle = document.getElementById('storyPartTitle');
+        if (part.title) {
+            newPartTitle.style.display = 'block';
+            newPartTitle.textContent = `Part ${part.part} – ${part.title}`;
+        } else {
+            newPartTitle.style.display = 'none';
+        }
     // Insert story text with vocabulary pills
     const content = document.getElementById('content-body');
     const replaced = part.storyText.replace(/\[([^\]]+)\]/g, (match, word) => {
@@ -1211,10 +1286,26 @@ function buildAccordion() {
             });
 
             // Toggle open/close on header click
-            header.addEventListener('click', () => {
-                header.classList.toggle('open');
-                list.classList.toggle('open');
-            });
+                           header.addEventListener('click', () => {
+                            const accordion = header.parentElement;
+                            const isOpen = header.classList.contains('open');
+                        
+                            // Close all chapters in this accordion
+                            accordion.querySelectorAll('.chapter-header').forEach(h => {
+                                h.classList.remove('open');
+                                const siblingList = h.nextElementSibling;
+                                if (siblingList && siblingList.classList.contains('parts-list')) {
+                                    siblingList.classList.remove('open');
+                                }
+                            });
+                        
+                            // If the clicked chapter was not open, open it now
+                            if (!isOpen) {
+                                header.classList.add('open');
+                                if (list) list.classList.add('open');
+                            }
+                            // If it was open, it stays closed (toggle off)
+                        });
 
             container.appendChild(header);
             container.appendChild(list);
