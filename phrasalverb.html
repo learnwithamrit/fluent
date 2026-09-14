@@ -357,7 +357,75 @@ body {
     padding-left: 12px;
     line-height: 1.6;
 }
+/* ═══════════════════════════════════════════════════════════════
+   POLYSEMOUS CARDS
+   Used only when the active category is "Polysemous".
+   Each meaning + its example is rendered as its own block, and
+   the whole card keeps a stacked layout even on desktop so the
+   meaning↔example pairing stays visually clear.
+   ═══════════════════════════════════════════════════════════════ */
 
+/* Two classes = higher specificity than `.example-card`,
+   so this wins over the desktop grid rules without !important. */
+.example-card.example-card--poly {
+    display: block;
+    background: var(--sur);
+    border: 1.5px solid var(--brd);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: var(--gap-sm);
+}
+.example-card.example-card--poly:hover {
+    border-color: var(--acc);
+    background: var(--sur);
+}
+
+.poly-meanings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.poly-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--brd);
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.poly-label {
+    font-size: var(--fs-xs);
+    font-weight: 900;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 8px;
+}
+
+.poly-en {
+    font-size: var(--fs-sm);
+    color: var(--blu);
+    line-height: 1.6;
+    margin-bottom: 4px;
+}
+
+.poly-bn {
+    font-family: var(--font-bn);
+    font-size: var(--fs-sm);
+    color: var(--grn);
+    font-weight: 600;
+    line-height: 1.7;
+    margin-bottom: 10px;
+}
+
+.poly-example {
+    font-size: var(--fs-sm);
+    color: var(--mut);
+    font-style: italic;
+    border-left: 3px solid var(--acc);
+    padding-left: 12px;
+    line-height: 1.6;
+}
 /* Empty-category state */
 .empty-state {
     text-align: center;
@@ -982,7 +1050,64 @@ function escapeHTML(str) {
  * cardHTML(item)
  * One phrasal-verb card. Uses the template's .example-card classes.
  */
+
+/**
+ * splitList(str)
+ * Splits a ";"-separated string into a trimmed array.
+ * Empty pieces are dropped, so trailing ";" won't create blanks.
+ *   "to remove clothing; to leave the ground" → ["to remove clothing", "to leave the ground"]
+ */
+function splitList(str) {
+  return String(str || '')
+    .split(';')
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+/**
+ * polyCardHTML(item)
+ * Special card layout used ONLY for the Polysemous category.
+ * Splits the English meaning, Bengali meaning, and example columns
+ * by ";" and pairs them by index:
+ *     Meaning 1 → example 1
+ *     Meaning 2 → example 2
+ * If the example column has fewer entries than the meaning column,
+ * the missing examples simply don't render.
+ */
+function polyCardHTML(item) {
+  const enMeanings = splitList(item.meaningEn);
+  const bnMeanings = splitList(item.meaningBn);
+  const examples   = splitList(item.example);
+
+  // Use the longer of the two meaning lists so nothing gets dropped
+  const count = Math.max(enMeanings.length, bnMeanings.length, 1);
+
+  let blocks = '';
+  for (let i = 0; i < count; i++) {
+    const en = enMeanings[i] || '';
+    const bn = bnMeanings[i] || '';
+    const ex = examples[i]   || '';
+
+    blocks += `
+      <div class="poly-item">
+        <div class="poly-label">Meaning ${i + 1}</div>
+        ${en ? `<div class="poly-en">${escapeHTML(en)}</div>` : ''}
+        ${bn ? `<div class="poly-bn" lang="bn">${escapeHTML(bn)}</div>` : ''}
+        ${ex ? `<div class="poly-example">"${escapeHTML(ex)}"</div>` : ''}
+      </div>`;
+  }
+
+  return `
+    <article class="example-card example-card--poly">
+      <div class="example-phrase">${escapeHTML(item.verb)}</div>
+      <div class="poly-meanings">${blocks}</div>
+    </article>`;
+}
+
+     
 function cardHTML(item) {
+  // Polysemous entries render with per-meaning blocks instead
+  if (state.category === 'Polysemous') return polyCardHTML(item);
   return `
     <article class="example-card">
       <div class="example-phrase">${escapeHTML(item.verb)}</div>
