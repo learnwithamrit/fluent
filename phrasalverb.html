@@ -426,6 +426,36 @@ body {
     padding-left: 12px;
     line-height: 1.6;
 }
+
+/* When Polysemous is active, strip the table wrapper so the poly
+   cards look like standalone stacked cards again. */
+.results-table.results-table--poly {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+}
+.results-table.results-table--poly .table-header {
+    display: none;
+}
+
+/* And on desktop, the poly cards themselves stay stacked with
+   their own rounded border — they don't become table rows. */
+@media (min-width: 768px) {
+    .example-card.example-card--poly {
+        display: block;
+        background: var(--sur);
+        border: 1.5px solid var(--brd);
+        border-radius: 16px;
+        padding: 20px 22px;
+        margin-bottom: var(--gap-sm);
+    }
+    .example-card.example-card--poly:hover {
+        border-color: var(--acc);
+        background: var(--sur);
+    }
+}
+     
 /* Empty-category state */
 .empty-state {
     text-align: center;
@@ -911,6 +941,7 @@ const jumpSelect    = document.getElementById('jumpSelect');
 const statusText    = document.getElementById('statusText');
 const metaCount     = document.getElementById('metaCount');
 const metaCategoryCount = document.getElementById('metaCategoryCount');   /* ★ NEW */
+const resultsTable = document.querySelector('.results-table');   /* ★ NEW */
 const categoryPillsAll = document.querySelectorAll('.category-pills'); /* Both pill rows — a NodeList so every loop below applies to all rows */
 
 
@@ -1058,8 +1089,11 @@ function escapeHTML(str) {
  *   "to remove clothing; to leave the ground" → ["to remove clothing", "to leave the ground"]
  */
 function splitList(str) {
+  // Splits on ASCII semicolon OR newline, whichever the sheet used.
+  // Trims, drops blanks — so trailing ";" or trailing "\n" won't
+  // create phantom meanings.
   return String(str || '')
-    .split(';')
+    .split(/[;\n]/)
     .map(s => s.trim())
     .filter(Boolean);
 }
@@ -1179,6 +1213,9 @@ metaCategoryCount.textContent =
 
   const start = (state.page - 1) * ROWS_PER_PAGE;
   const slice = items.slice(start, start + ROWS_PER_PAGE);
+  // ★ NEW — when Polysemous is active, tag the wrapper so CSS can
+  // hide the table header + remove the outer card border
+  resultsTable.classList.toggle('results-table--poly', state.category === 'Polysemous');
 
   // 1. Cards — or an empty state if the category has no rows yet
   if (items.length === 0) {
