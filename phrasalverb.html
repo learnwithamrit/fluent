@@ -358,15 +358,11 @@ body {
     line-height: 1.6;
 }
 /* ═══════════════════════════════════════════════════════════════
-   POLYSEMOUS CARDS
-   Used only when the active category is "Polysemous".
-   Each meaning + its example is rendered as its own block, and
-   the whole card keeps a stacked layout even on desktop so the
-   meaning↔example pairing stays visually clear.
+   POLYSEMOUS CARDS — mobile-first (stacked)
+   On desktop the media query further down restores the 3-column
+   layout used by every other category.
    ═══════════════════════════════════════════════════════════════ */
 
-/* Two classes = higher specificity than `.example-card`,
-   so this wins over the desktop grid rules without !important. */
 .example-card.example-card--poly {
     display: block;
     background: var(--sur);
@@ -380,13 +376,18 @@ body {
     background: var(--sur);
 }
 
-.poly-meanings {
+/* Container holding all meaning-rows */
+.poly-rows {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.poly-item {
+/* One meaning + its paired example */
+.poly-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--brd);
     border-radius: 12px;
@@ -415,7 +416,6 @@ body {
     color: var(--grn);
     font-weight: 600;
     line-height: 1.7;
-    margin-bottom: 10px;
 }
 
 .poly-example {
@@ -427,32 +427,81 @@ body {
     line-height: 1.6;
 }
 
-/* When Polysemous is active, strip the table wrapper so the poly
-   cards look like standalone stacked cards again. */
-.results-table.results-table--poly {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    overflow: visible;
-}
-.results-table.results-table--poly .table-header {
-    display: none;
+/* On mobile, strip the table chrome so the poly cards look like
+   standalone cards. On desktop the default .results-table styling
+   takes over and the PHRASE | MEANING | EXAMPLE header is visible. */
+@media (max-width: 767px) {
+    .results-table.results-table--poly {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        overflow: visible;
+    }
+    .results-table.results-table--poly .table-header {
+        display: none;
+    }
 }
 
-/* And on desktop, the poly cards themselves stay stacked with
-   their own rounded border — they don't become table rows. */
+/* ═══════════════════════════════════════════════════════════════
+   POLYSEMOUS CARDS — desktop (3-column, matches every other row)
+   Column 1: verb       Column 2: meanings stacked
+   Column 3: examples stacked, each aligned with its meaning.
+   ═══════════════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
     .example-card.example-card--poly {
-        display: block;
-        background: var(--sur);
-        border: 1.5px solid var(--brd);
-        border-radius: 16px;
-        padding: 20px 22px;
-        margin-bottom: var(--gap-sm);
+        display: grid;
+        grid-template-columns: 1fr 2.9fr;   /* verb | rest (2.9fr = 1.3 + 1.6 of the standard table) */
+        gap: 24px;
+        align-items: start;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--brd);
+        border-radius: 0;
+        padding: 20px 24px;
+        margin-bottom: 0;
+        transition: background .15s;
     }
+    .example-card.example-card--poly:last-child { border-bottom: none; }
     .example-card.example-card--poly:hover {
-        border-color: var(--acc);
-        background: var(--sur);
+        background: #ffffff04;
+        border-color: var(--brd);
+    }
+
+    /* Verb sits at the top of the first column */
+    .example-card.example-card--poly .example-phrase {
+        margin-bottom: 0;
+        padding-top: 2px;
+    }
+
+    /* Rows of [meaning | example], stacked vertically */
+    .poly-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .poly-row {
+        display: grid;
+        grid-template-columns: 1.3fr 1.6fr;   /* matches the MEANING / EXAMPLE columns */
+        gap: 24px;
+        align-items: start;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    /* Meaning cell padding on desktop */
+    .poly-meaning {
+        min-width: 0;
+    }
+    .poly-row .poly-label { margin-bottom: 6px; }
+    .poly-row .poly-bn { margin-bottom: 0; }
+
+    /* Example cell keeps the orange left rule for visual rhythm */
+    .poly-row .poly-example {
+        border-left: 3px solid var(--acc);
+        padding-left: 12px;
     }
 }
      
@@ -1113,28 +1162,33 @@ function polyCardHTML(item) {
   const bnMeanings = splitList(item.meaningBn);
   const examples   = splitList(item.example);
 
-  // Use the longer of the two meaning lists so nothing gets dropped
   const count = Math.max(enMeanings.length, bnMeanings.length, 1);
 
-  let blocks = '';
+  // Each row holds one meaning block + its paired example.
+  // On mobile the two stack inside the row.
+  // On desktop the row becomes a two-column grid so meanings and
+  // examples line up under the MEANING / EXAMPLE table headers.
+  let rows = '';
   for (let i = 0; i < count; i++) {
     const en = enMeanings[i] || '';
     const bn = bnMeanings[i] || '';
     const ex = examples[i]   || '';
 
-    blocks += `
-      <div class="poly-item">
-        <div class="poly-label">Meaning ${i + 1}</div>
-        ${en ? `<div class="poly-en">${escapeHTML(en)}</div>` : ''}
-        ${bn ? `<div class="poly-bn" lang="bn">${escapeHTML(bn)}</div>` : ''}
-        ${ex ? `<div class="poly-example">"${escapeHTML(ex)}"</div>` : ''}
+    rows += `
+      <div class="poly-row">
+        <div class="poly-meaning">
+          <div class="poly-label">Meaning ${i + 1}</div>
+          ${en ? `<div class="poly-en">${escapeHTML(en)}</div>` : ''}
+          ${bn ? `<div class="poly-bn" lang="bn">${escapeHTML(bn)}</div>` : ''}
+        </div>
+        <div class="poly-example">${ex ? `"${escapeHTML(ex)}"` : ''}</div>
       </div>`;
   }
 
   return `
     <article class="example-card example-card--poly">
       <div class="example-phrase">${escapeHTML(item.verb)}</div>
-      <div class="poly-meanings">${blocks}</div>
+      <div class="poly-rows">${rows}</div>
     </article>`;
 }
 
